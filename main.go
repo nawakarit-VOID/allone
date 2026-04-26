@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 
@@ -178,21 +179,28 @@ func main() {
 	command.SetPlaceHolder("*binary name - ชื่อโปแกรมตอน Build")
 
 	categories := widget.NewEntry()
-	categories.SetText("Utility;")
+	categories.SetText("")
 	categories.SetPlaceHolder("*Utility; - ประเภทโปรแกรม")
 
-	catmenu := widget.NewMultiLineEntry()
-	catmenu.SetText(`ประเภทโปรแกรม
-	Utility; = ยูทิลิตี้ (ทั่วไป)
-	Development; = การพัฒนา
-	Game; = เกม
-	Graphics; = กราฟิก
-	Network; = เครือข่าย
-	Office; = สำนักงาน
-	Audio; = เสียง
-	Video; = วิดีโอ
-	System; = ระบบ`)
-	catmenu.SetMinRowsVisible(11)
+	catmenu := widget.NewCheckGroup(
+		[]string{
+			"Utility",
+			"Development",
+			"Game",
+			"Graphics",
+			"Network",
+			"Office",
+			"Audio",
+			"Video",
+			"System"},
+		func(selected []string) {
+			if len(selected) == 0 {
+				categories.SetText("ยังไม่ได้เลือก")
+				return
+			}
+			categories.SetText(strings.Join(selected, ";") + ";")
+		},
+	)
 
 	summary := widget.NewEntry()
 	summary.SetText("Faster")
@@ -443,6 +451,6 @@ func main() {
 
 	w.SetContent(ui)
 	w.Resize(fyne.NewSize(1000, 600))
-	w.SetFixedSize(true)
+	//w.SetFixedSize(true)
 	w.ShowAndRun()
 }
