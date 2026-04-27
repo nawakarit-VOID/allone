@@ -6,6 +6,7 @@ package main
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 	"text/template"
 
 	"fyne.io/fyne/v2/widget"
@@ -16,6 +17,27 @@ func showMsg(msg string) {
 	// dialog.ShowInformation("แจ้งเตือน", msg, w)
 	// แต่ตัวอย่างนี้ขอใช้ print
 	println(msg)
+}
+
+// ============================================================================
+// .image
+// ============================================================================
+
+func copyAppImageTool(projectPath string) error {
+	src := "./appimagetool-x86_64.AppImage"
+	dst := filepath.Join(projectPath, "appimagetool-x86_64.AppImage")
+
+	// ถ้ามีอยู่แล้ว → ไม่ต้อง copy
+	if _, err := os.Stat(dst); err == nil {
+		return nil
+	}
+
+	data, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(dst, data, 0755)
 }
 
 // ============================================================================

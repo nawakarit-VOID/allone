@@ -223,7 +223,7 @@ func main() {
 	// ============================================================================
 	projectPath := ""
 
-	selectBtn := widget.NewButton("1.Select Project", func() {
+	selectBtn := widget.NewButton("Select Project", func() {
 		dialog.ShowFolderOpen(func(uri fyne.ListableURI, err error) {
 			if uri == nil {
 				return
@@ -237,7 +237,7 @@ func main() {
 	// Generate scrip Icons Btn
 	// ============================================================================
 	// 🔧 Generate
-	genscripiconsBtn := widget.NewButton("2.scrip Icons", func() {
+	genscripiconsBtn := widget.NewButton("scrip Icons", func() {
 
 		if projectPath == "" {
 			logBox.SetText("❌ Please select project folder")
@@ -254,7 +254,7 @@ func main() {
 	// Generate scrip flatpak Btn
 	// ============================================================================
 	// 🔧 Generate
-	genscripflatpakBtn := widget.NewButton("\n* * * 5 - Generate Folder * * *\nscrip Flatpak - -\n- - Scrip Build Flatpak - -\n- - Scrip Install Flatpak - -\n", func() {
+	genscripflatpakBtn := widget.NewButton("Generate scrip Folder", func() {
 
 		if projectPath == "" {
 			logBox.SetText("❌ Please select project folder")
@@ -312,7 +312,7 @@ func main() {
 	buildflatpakBtn := widget.NewButton("7 - Run Build Flatpak", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ select folder first")
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
@@ -328,7 +328,7 @@ func main() {
 	installBtn := widget.NewButton("8 - Install Flatpak", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ select folder first")
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
@@ -341,10 +341,10 @@ func main() {
 	// ============================================================================
 	// ปุ่ม Build Icons **ใช้ imagemagick
 	// ============================================================================
-	buildIconsBtn := widget.NewButton("3.Build Icons", func() {
+	buildIconsBtn := widget.NewButton("Build Icons", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ select folder first")
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
@@ -357,52 +357,26 @@ func main() {
 	// ============================================================================
 	// ปุ่มเพิ่มวัน เวลา
 	// ============================================================================
-	nowBtn := widget.NewButton("4.เวลาปัจจุบัน", func() {
+	nowBtn := widget.NewButton("เวลาปัจจุบัน", func() {
 		now := time.Now()
 
 		date.SetText(now.Format("2006-01-02"))
 		timeEntry.SetText(now.Format("15:04"))
 	})
+
+	coppyimagebtn := widget.NewButton("ปุ่มก๊อป image", func() {
+
+		if projectPath == "" {
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			return
+		}
+
+		go copyAppImageTool(projectPath)
+	})
+
 	// ============================================================================
 	// จัดหน้ามัน
 	// ============================================================================
-	/*
-	   	ui := container.NewScroll(
-
-	   		container.NewVBox(
-	   			container.NewGridWithColumns(5, exBtn, resetExBtn, selectBtn, genscripiconsBtn, buildIconsBtn),
-	   			container.NewGridWithColumns(2, name, appID),
-	   			container.NewGridWithColumns(2, command, categories),
-	   			catmenu,
-	   			container.NewGridWithColumns(2, developer, version),
-	   			container.NewGridWithColumns(3, date, timeEntry, nowBtn),
-	   			summary, description,
-
-	   			container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
-	   			container.NewGridWithColumns(2, owner, nameRepo),
-	   			namePix1,
-	   			namePix2,
-	   			namePix3,
-	   			namePix4,
-	   			namePix5,
-	   			genscripflatpakBtn,
-
-	   			container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
-
-	   			buildflatpakBtn, installBtn,
-	   			//widget.NewLabel("Logs:"),
-	   			logBox,
-	   		),
-	   	)
-
-	   	w.SetContent(ui)
-	   	w.Resize(fyne.NewSize(600, 600))
-	   	//w.SetFixedSize(true)
-	   	w.ShowAndRun()
-	   }
-
-	*/
-
 	// สร้างพื้นที่แสดงเนื้อหาหลัก (ด้านขวา)
 	contentArea := container.NewStack()
 
@@ -478,9 +452,7 @@ func main() {
 		flatpak := container.NewScroll(
 
 			container.NewVBox(
-				container.NewGridWithColumns(3,
 
-					selectBtn, genscripiconsBtn, buildIconsBtn),
 				container.NewGridWithColumns(2, name, appID),
 				container.NewGridWithColumns(2, command, categories),
 				catmenu,
@@ -502,7 +474,7 @@ func main() {
 				buildflatpakBtn, installBtn,
 			))
 		setContent(container.NewBorder(
-			container.NewGridWrap(fyne.NewSize(200, 50), widget.NewLabel("Flatpak")),
+			widget.NewLabel("Flatpak"),
 			nil,
 			nil,
 			nil,
@@ -510,25 +482,54 @@ func main() {
 		))
 	})
 
+	// ปุ่ม .image
+	btnimage := widget.NewButton("Image", func() {
+		buttons := container.NewGridWithColumns(2,
+			widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
+			widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
+			widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
+			widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
+		)
+		setContent(container.NewVBox(
+			widget.NewLabel("เมนูย่อยของ D:"),
+			buttons,
+			coppyimagebtn,
+		))
+
+	})
+
 	// เมนูด้านซ้าย
-	leftMenu := container.NewVBox(
+	leftMenu := container.NewBorder(
 
-		widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
-		widget.NewSeparator(),
-		btnA,
-		btnB,
-		btnC,
-		btnD,
-		btnflatpak,
-		widget.NewSeparator(),
-		container.NewGridWithColumns(2, exBtn, resetExBtn),
-		logBox,
+		container.NewVBox(
+
+			widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+			//widget.NewSeparator(),
+			selectBtn,
+			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
+			btnA,
+			btnB,
+			btnC,
+			btnD,
+			btnimage,
+			btnflatpak,
+			//widget.NewSeparator(),
+			container.NewGridWithColumns(2, exBtn, resetExBtn),
+			logBox,
+		),
 		container.NewGridWrap(fyne.NewSize(200, 35), widget.NewButton("🚪 ออก", func() { a.Quit() })),
+		nil,
+		nil,
+		nil,
 	)
-
 	// จัด layout แบบ Border (ซ้าย : ขวา)
 	// ไม่มีเส้นแบ่ง ไม่มีพื้นหลังแยก
-	mainContainer := container.NewBorder(nil, nil, leftMenu, nil, contentArea)
+	mainContainer := container.NewBorder(
+		nil,
+		nil,
+		leftMenu,
+		nil,
+		contentArea)
 
 	w.SetContent(mainContainer)
 	w.Resize(fyne.NewSize(850, 850))
