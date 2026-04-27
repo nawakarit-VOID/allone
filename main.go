@@ -473,12 +473,14 @@ func main() {
 	})
 
 	// ปุ่ม btnflatpak
-	btnflatpak := widget.NewButton("🔘 flatpak", func() {
+	btnflatpak := widget.NewButton("Flatpak", func() {
 
 		flatpak := container.NewScroll(
 
 			container.NewVBox(
-				container.NewGridWithColumns(5, exBtn, resetExBtn, selectBtn, genscripiconsBtn, buildIconsBtn),
+				container.NewGridWithColumns(3,
+
+					selectBtn, genscripiconsBtn, buildIconsBtn),
 				container.NewGridWithColumns(2, name, appID),
 				container.NewGridWithColumns(2, command, categories),
 				catmenu,
@@ -498,33 +500,30 @@ func main() {
 				container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
 
 				buildflatpakBtn, installBtn,
-				//widget.NewLabel("Logs:"),
-
 			))
 		setContent(container.NewBorder(
-			widget.NewLabel("เมนูย่อยของ D:"),
+			container.NewGridWrap(fyne.NewSize(200, 50), widget.NewLabel("Flatpak")),
 			nil,
 			nil,
 			nil,
 			flatpak,
-
-			//	container.NewGridWrap(fyne.NewSize(500, 500), flatpak),
 		))
 	})
 
 	// เมนูด้านซ้าย
 	leftMenu := container.NewVBox(
+
 		widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		widget.NewSeparator(),
-
-		container.NewGridWrap(fyne.NewSize(200, 35), btnA),
+		btnA,
 		btnB,
 		btnC,
 		btnD,
 		btnflatpak,
 		widget.NewSeparator(),
+		container.NewGridWithColumns(2, exBtn, resetExBtn),
 		logBox,
-		widget.NewButton("🚪 ออก", func() { a.Quit() }),
+		container.NewGridWrap(fyne.NewSize(200, 35), widget.NewButton("🚪 ออก", func() { a.Quit() })),
 	)
 
 	// จัด layout แบบ Border (ซ้าย : ขวา)
@@ -532,12 +531,6 @@ func main() {
 	mainContainer := container.NewBorder(nil, nil, leftMenu, nil, contentArea)
 
 	w.SetContent(mainContainer)
+	w.Resize(fyne.NewSize(850, 850))
 	w.ShowAndRun()
-}
-
-func showMsg(msg string) {
-	// ใช้ dialog ถ้าต้องการ popup
-	// dialog.ShowInformation("แจ้งเตือน", msg, w)
-	// แต่ตัวอย่างนี้ขอใช้ print
-	println(msg)
 }
