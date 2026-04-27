@@ -45,7 +45,6 @@ type AppConfig struct {
 // โหลด icon
 func loadIcon(size int) fyne.Resource {
 	var file string
-
 	switch {
 	case size >= 512:
 		file = "icons/icon-512.png" ///ที่อยู่
@@ -56,7 +55,6 @@ func loadIcon(size int) fyne.Resource {
 	default:
 		file = "icons/icon-64.png"
 	}
-
 	data, _ := iconFS.ReadFile(file)
 	return fyne.NewStaticResource(file, data)
 }
@@ -163,10 +161,50 @@ func main() {
 	logBox.Wrapping = fyne.TextWrapWord
 
 	// ============================================================================
+	// เลือกแฟ้มเป้าหมาย
+	// ============================================================================
+	projectPath := ""
+	selectBtn := widget.NewButton("Select Project", func() {
+		dialog.ShowFolderOpen(func(uri fyne.ListableURI, err error) {
+			if uri == nil {
+				return
+			}
+			projectPath = uri.Path()
+			logBox.SetText("📁 Selected: " + projectPath)
+		}, w)
+	})
+	// ============================================================================
+	// Generate scrip Icons
+	// ============================================================================
+	genscripiconsBtn := widget.NewButton("scrip Icons", func() {
+		if projectPath == "" {
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			return
+		}
+		cfg := AppConfig{}
+		generateFile("templates/tmp_icons/buildicons.tmpl",
+			filepath.Join(projectPath, "buildicons.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
+		logBox.SetText("✅ Generated File - - buildicons - -")
+	})
+	// ============================================================================
+	// Build Icons **ใช้ imagemagick
+	// ============================================================================
+	buildIconsBtn := widget.NewButton("Build Icons", func() {
+
+		if projectPath == "" {
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			return
+		}
+
+		//  run script
+		go runScriptbuildIcons(projectPath, logBox)
+
+		logBox.SetText("🚀 Build started in terminal...")
+	})
+	// ============================================================================
 	// test ด่วน
 	// ============================================================================
 	exBtn := widget.NewButton("Ex.", func() {
-
 		name.SetText("Music_Player")
 		appID.SetText("com.xxx.Music_Player")
 		command.SetText("Music_Player")
@@ -187,14 +225,11 @@ func main() {
 		namePix5.SetText("test_2026-04-06_21-06-09")
 
 		logBox.SetText("✅ Example now")
-
 	})
-
 	// ============================================================================
-	// reset EX
+	// Reset EX
 	// ============================================================================
-	resetExBtn := widget.NewButton("resetEx.", func() {
-
+	resetExBtn := widget.NewButton("ResetEx.", func() {
 		name.SetText("")
 		appID.SetText("com.nawakarit.")
 		command.SetText("")
@@ -215,41 +250,24 @@ func main() {
 		namePix5.SetText("")
 
 		logBox.SetText("✅ Reset example")
-
-	})
-
-	// ============================================================================
-	// เลือกแฟ้มเป้าหมาย
-	// ============================================================================
-	projectPath := ""
-
-	selectBtn := widget.NewButton("Select Project", func() {
-		dialog.ShowFolderOpen(func(uri fyne.ListableURI, err error) {
-			if uri == nil {
-				return
-			}
-
-			projectPath = uri.Path()
-			logBox.SetText("📁 Selected: " + projectPath)
-		}, w)
 	})
 	// ============================================================================
-	// Generate scrip Icons Btn
+	// AppimageTool
 	// ============================================================================
-	// 🔧 Generate
-	genscripiconsBtn := widget.NewButton("scrip Icons", func() {
-
+	// ============================================================================
+	// coppy image master to project
+	// ============================================================================
+	coppyimagebtn := widget.NewButton("Coppy image", func() {
 		if projectPath == "" {
-			logBox.SetText("❌ Please select project folder")
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-		cfg := AppConfig{}
-
-		generateFile("templates/tmp_icons/buildicons.tmpl",
-			filepath.Join(projectPath, "buildicons.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
-
-		logBox.SetText("✅ Generated File - - buildicons - -")
+		go copyAppImageTool(projectPath)
 	})
+
+	// ============================================================================
+	// Flatpak
+	// ============================================================================
 	// ============================================================================
 	// Generate scrip flatpak Btn
 	// ============================================================================
@@ -257,7 +275,7 @@ func main() {
 	genscripflatpakBtn := widget.NewButton("Generate scrip Folder", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ Please select project folder")
+			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
@@ -339,22 +357,6 @@ func main() {
 	})
 
 	// ============================================================================
-	// ปุ่ม Build Icons **ใช้ imagemagick
-	// ============================================================================
-	buildIconsBtn := widget.NewButton("Build Icons", func() {
-
-		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
-			return
-		}
-
-		//  run script
-		go runScriptbuildIcons(projectPath, logBox)
-
-		logBox.SetText("🚀 Build started in terminal...")
-	})
-
-	// ============================================================================
 	// ปุ่มเพิ่มวัน เวลา
 	// ============================================================================
 	nowBtn := widget.NewButton("เวลาปัจจุบัน", func() {
@@ -364,18 +366,8 @@ func main() {
 		timeEntry.SetText(now.Format("15:04"))
 	})
 
-	coppyimagebtn := widget.NewButton("ปุ่มก๊อป image", func() {
-
-		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
-			return
-		}
-
-		go copyAppImageTool(projectPath)
-	})
-
 	// ============================================================================
-	// จัดหน้ามัน
+	// จัดหน้า..มัน
 	// ============================================================================
 	// สร้างพื้นที่แสดงเนื้อหาหลัก (ด้านขวา)
 	contentArea := container.NewStack()
@@ -387,64 +379,8 @@ func main() {
 	}
 
 	// หน้าแรก (ต้อนรับ)
-	welcome := widget.NewLabel("เลือกเมนูด้านซ้าย")
+	welcome := widget.NewLabel("")
 	setContent(welcome)
-
-	// --- สร้างเมนูด้านซ้าย ---
-	// ปุ่ม A (แสดงรายละเอียด)
-
-	btnA := widget.NewButton("📁 รายละเอียด A", func() {
-		detail := widget.NewCard("รายละเอียด A",
-			"ข้อมูลเพิ่มเติม",
-			widget.NewLabel("นี่คือรายละเอียดของเมนู A\nสามารถเพิ่มข้อความหรือ input ได้"))
-		setContent(detail)
-	})
-
-	// ปุ่ม B (มีปุ่มย่อยในเนื้อหา)
-	btnB := widget.NewButton("⚙️ ตั้งค่า B", func() {
-		subBtn1 := widget.NewButton("ตัวเลือกที่ 1", func() {
-			widget.NewLabel("เลือก 1")
-		})
-		subBtn2 := widget.NewButton("ตัวเลือกที่ 2", func() {
-			widget.NewLabel("เลือก 2")
-		})
-		subForm := container.NewVBox(
-			widget.NewLabel("เลือกการทำงานเพิ่มเติม:"),
-			subBtn1,
-			subBtn2,
-			widget.NewSeparator(),
-			widget.NewLabel("หรือกรอกข้อมูล:"),
-			widget.NewEntry(),
-		)
-		setContent(subForm)
-	})
-
-	// ปุ่ม C (แสดงฟอร์ม)
-	btnC := widget.NewButton("📝 ฟอร์ม C", func() {
-		form := widget.NewForm(
-			widget.NewFormItem("ชื่อ", widget.NewEntry()),
-			widget.NewFormItem("อีเมล", widget.NewEntry()),
-		)
-		form.SubmitText = "บันทึก"
-		form.OnSubmit = func() {
-			setContent(widget.NewLabel("บันทึกสำเร็จ!"))
-		}
-		setContent(form)
-	})
-
-	// ปุ่ม D (แสดงปุ่มย่อยหลายปุ่ม)
-	btnD := widget.NewButton("🔘 เมนู D (ปุ่มย่อย)", func() {
-		buttons := container.NewGridWithColumns(2,
-			widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
-			widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
-			widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
-			widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
-		)
-		setContent(container.NewVBox(
-			widget.NewLabel("เมนูย่อยของ D:"),
-			buttons,
-		))
-	})
 
 	// ปุ่ม btnflatpak
 	btnflatpak := widget.NewButton("Flatpak", func() {
@@ -484,15 +420,15 @@ func main() {
 
 	// ปุ่ม .image
 	btnimage := widget.NewButton("Image", func() {
-		buttons := container.NewGridWithColumns(2,
+		/*	buttons := container.NewGridWithColumns(2,
 			widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
 			widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
 			widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
 			widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
-		)
+		) */
 		setContent(container.NewVBox(
-			widget.NewLabel("เมนูย่อยของ D:"),
-			buttons,
+			widget.NewLabel("AppimageTool"),
+			//buttons,
 			coppyimagebtn,
 		))
 
@@ -507,14 +443,14 @@ func main() {
 			//widget.NewSeparator(),
 			selectBtn,
 			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
-			btnA,
-			btnB,
-			btnC,
-			btnD,
+			container.NewGridWithColumns(2, exBtn, resetExBtn),
+			//btnA,
+			//btnB,
+			//btnC,
+			//btnD,
 			btnimage,
 			btnflatpak,
 			//widget.NewSeparator(),
-			container.NewGridWithColumns(2, exBtn, resetExBtn),
 			logBox,
 		),
 		container.NewGridWrap(fyne.NewSize(200, 35), widget.NewButton("🚪 ออก", func() { a.Quit() })),
@@ -535,3 +471,59 @@ func main() {
 	w.Resize(fyne.NewSize(850, 850))
 	w.ShowAndRun()
 }
+
+/*// --- สร้างเมนูด้านซ้าย ---
+// ปุ่ม A (แสดงรายละเอียด)
+btnA := widget.NewButton("📁 รายละเอียด A", func() {
+	detail := widget.NewCard("รายละเอียด A",
+		"ข้อมูลเพิ่มเติม",
+		widget.NewLabel("นี่คือรายละเอียดของเมนู A\nสามารถเพิ่มข้อความหรือ input ได้"))
+	setContent(detail)
+})
+
+// ปุ่ม B (มีปุ่มย่อยในเนื้อหา)
+btnB := widget.NewButton("⚙️ ตั้งค่า B", func() {
+	subBtn1 := widget.NewButton("ตัวเลือกที่ 1", func() {
+		widget.NewLabel("เลือก 1")
+	})
+	subBtn2 := widget.NewButton("ตัวเลือกที่ 2", func() {
+		widget.NewLabel("เลือก 2")
+	})
+	subForm := container.NewVBox(
+		widget.NewLabel("เลือกการทำงานเพิ่มเติม:"),
+		subBtn1,
+		subBtn2,
+		widget.NewSeparator(),
+		widget.NewLabel("หรือกรอกข้อมูล:"),
+		widget.NewEntry(),
+	)
+	setContent(subForm)
+})
+
+// ปุ่ม C (แสดงฟอร์ม)
+btnC := widget.NewButton("📝 ฟอร์ม C", func() {
+	form := widget.NewForm(
+		widget.NewFormItem("ชื่อ", widget.NewEntry()),
+		widget.NewFormItem("อีเมล", widget.NewEntry()),
+	)
+	form.SubmitText = "บันทึก"
+	form.OnSubmit = func() {
+		setContent(widget.NewLabel("บันทึกสำเร็จ!"))
+	}
+	setContent(form)
+})
+
+// ปุ่ม D (แสดงปุ่มย่อยหลายปุ่ม)
+btnD := widget.NewButton("🔘 เมนู D (ปุ่มย่อย)", func() {
+	buttons := container.NewGridWithColumns(2,
+		widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
+		widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
+		widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
+		widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
+	)
+	setContent(container.NewVBox(
+		widget.NewLabel("เมนูย่อยของ D:"),
+		buttons,
+	))
+})
+*/

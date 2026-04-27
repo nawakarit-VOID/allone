@@ -12,34 +12,33 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func showMsg(msg string) {
-	// ใช้ dialog ถ้าต้องการ popup
-	// dialog.ShowInformation("แจ้งเตือน", msg, w)
-	// แต่ตัวอย่างนี้ขอใช้ print
-	println(msg)
+// ============================================================================
+// ฟังชั้น build Icons
+// ============================================================================
+func runScriptbuildIcons(projectPath string, output *widget.Entry) {
+
+	commands := [][]string{ //ใช้ imagemagick
+		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
+		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
+		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
+		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
+	}
+
+	for _, c := range commands {
+		cmd := exec.Command(c[0], c[1:]...)
+		err := cmd.Start()
+		if err == nil {
+			output.SetText("🚀 opened terminal: " + c[0])
+			return
+		}
+	}
+
+	output.SetText("❌ no terminal found")
 }
 
 // ============================================================================
-// .image
+// Flatpak
 // ============================================================================
-
-func copyAppImageTool(projectPath string) error {
-	src := "./appimagetool-x86_64.AppImage"
-	dst := filepath.Join(projectPath, "appimagetool-x86_64.AppImage")
-
-	// ถ้ามีอยู่แล้ว → ไม่ต้อง copy
-	if _, err := os.Stat(dst); err == nil {
-		return nil
-	}
-
-	data, err := os.ReadFile(src)
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile(dst, data, 0755)
-}
-
 // ============================================================================
 // ฟังชั้น gen + run template
 // ============================================================================
@@ -108,25 +107,32 @@ func runScripinstallflatpak(projectPath string, output *widget.Entry) {
 }
 
 // ============================================================================
-// ฟังชั้น build Icons
+// Appimagetool
 // ============================================================================
-func runScriptbuildIcons(projectPath string, output *widget.Entry) {
+// ============================================================================
+// .image
+// ============================================================================
 
-	commands := [][]string{ //ใช้ imagemagick
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
+func copyAppImageTool(projectPath string) error {
+	src := "./appimagetool/appimagetool-x86_64.AppImage"
+	dst := filepath.Join(projectPath, "appimagetool-x86_64.AppImage")
+
+	// ถ้ามีอยู่แล้ว → ไม่ต้อง copy
+	if _, err := os.Stat(dst); err == nil {
+		return nil
 	}
 
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("🚀 opened terminal: " + c[0])
-			return
-		}
+	data, err := os.ReadFile(src)
+	if err != nil {
+		return err
 	}
 
-	output.SetText("❌ no terminal found")
+	return os.WriteFile(dst, data, 0755)
+}
+
+func showMsg(msg string) {
+	// ใช้ dialog ถ้าต้องการ popup
+	// dialog.ShowInformation("แจ้งเตือน", msg, w)
+	// แต่ตัวอย่างนี้ขอใช้ print
+	println(msg)
 }
