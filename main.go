@@ -366,44 +366,44 @@ func main() {
 	// ============================================================================
 	// จัดหน้ามัน
 	// ============================================================================
+	/*
+	   	ui := container.NewScroll(
 
-	ui := container.NewScroll(
+	   		container.NewVBox(
+	   			container.NewGridWithColumns(5, exBtn, resetExBtn, selectBtn, genscripiconsBtn, buildIconsBtn),
+	   			container.NewGridWithColumns(2, name, appID),
+	   			container.NewGridWithColumns(2, command, categories),
+	   			catmenu,
+	   			container.NewGridWithColumns(2, developer, version),
+	   			container.NewGridWithColumns(3, date, timeEntry, nowBtn),
+	   			summary, description,
 
-		container.NewVBox(
-			container.NewGridWithColumns(5, exBtn, resetExBtn, selectBtn, genscripiconsBtn, buildIconsBtn),
-			container.NewGridWithColumns(2, name, appID),
-			container.NewGridWithColumns(2, command, categories),
-			catmenu,
-			container.NewGridWithColumns(2, developer, version),
-			container.NewGridWithColumns(3, date, timeEntry, nowBtn),
-			summary, description,
+	   			container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
+	   			container.NewGridWithColumns(2, owner, nameRepo),
+	   			namePix1,
+	   			namePix2,
+	   			namePix3,
+	   			namePix4,
+	   			namePix5,
+	   			genscripflatpakBtn,
 
-			container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
-			container.NewGridWithColumns(2, owner, nameRepo),
-			namePix1,
-			namePix2,
-			namePix3,
-			namePix4,
-			namePix5,
-			genscripflatpakBtn,
+	   			container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
 
-			container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
+	   			buildflatpakBtn, installBtn,
+	   			//widget.NewLabel("Logs:"),
+	   			logBox,
+	   		),
+	   	)
 
-			buildflatpakBtn, installBtn,
-			//widget.NewLabel("Logs:"),
-			logBox,
-		),
-	)
+	   	w.SetContent(ui)
+	   	w.Resize(fyne.NewSize(600, 600))
+	   	//w.SetFixedSize(true)
+	   	w.ShowAndRun()
+	   }
 
-	w.SetContent(ui)
-	w.Resize(fyne.NewSize(600, 600))
-	//w.SetFixedSize(true)
-	w.ShowAndRun()
-}
+	*/
 
-/*
-
-// สร้างพื้นที่แสดงเนื้อหาหลัก (ด้านขวา)
+	// สร้างพื้นที่แสดงเนื้อหาหลัก (ด้านขวา)
 	contentArea := container.NewStack()
 
 	// ฟังก์ชันเปลี่ยนหน้า
@@ -418,6 +418,7 @@ func main() {
 
 	// --- สร้างเมนูด้านซ้าย ---
 	// ปุ่ม A (แสดงรายละเอียด)
+
 	btnA := widget.NewButton("📁 รายละเอียด A", func() {
 		detail := widget.NewCard("รายละเอียด A",
 			"ข้อมูลเพิ่มเติม",
@@ -471,15 +472,58 @@ func main() {
 		))
 	})
 
+	// ปุ่ม btnflatpak
+	btnflatpak := widget.NewButton("🔘 flatpak", func() {
+
+		flatpak := container.NewScroll(
+
+			container.NewVBox(
+				container.NewGridWithColumns(5, exBtn, resetExBtn, selectBtn, genscripiconsBtn, buildIconsBtn),
+				container.NewGridWithColumns(2, name, appID),
+				container.NewGridWithColumns(2, command, categories),
+				catmenu,
+				container.NewGridWithColumns(2, developer, version),
+				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
+				summary, description,
+
+				container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
+				container.NewGridWithColumns(2, owner, nameRepo),
+				namePix1,
+				namePix2,
+				namePix3,
+				namePix4,
+				namePix5,
+				genscripflatpakBtn,
+
+				container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
+
+				buildflatpakBtn, installBtn,
+				//widget.NewLabel("Logs:"),
+
+			))
+		setContent(container.NewBorder(
+			widget.NewLabel("เมนูย่อยของ D:"),
+			nil,
+			nil,
+			nil,
+			flatpak,
+
+			//	container.NewGridWrap(fyne.NewSize(500, 500), flatpak),
+		))
+	})
+
 	// เมนูด้านซ้าย
 	leftMenu := container.NewVBox(
 		widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		widget.NewSeparator(),
-		btnA,
+
+		container.NewGridWrap(fyne.NewSize(200, 35), btnA),
 		btnB,
 		btnC,
 		btnD,
+		btnflatpak,
 		widget.NewSeparator(),
+		logBox,
 		widget.NewButton("🚪 ออก", func() { a.Quit() }),
 	)
 
@@ -497,5 +541,3 @@ func showMsg(msg string) {
 	// แต่ตัวอย่างนี้ขอใช้ print
 	println(msg)
 }
-
-*/
