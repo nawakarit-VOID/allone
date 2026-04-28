@@ -62,6 +62,10 @@ func loadIcon(size int) fyne.Resource {
 //go:embed icons/*
 var iconFS embed.FS
 
+//go:embed assets/font/Itim-Regular.ttf
+var fontItim []byte
+var myFont = fyne.NewStaticResource("Itim-Regular.ttf", fontItim)
+
 // ============================================================================
 // main
 // ============================================================================
@@ -72,6 +76,8 @@ func main() {
 	a.SetIcon(icons)
 	w := a.NewWindow("allone")
 	w.SetIcon(icons)
+
+	a.Settings().SetTheme(&MyTheme{})
 
 	// inputs
 	name := widget.NewEntry()
