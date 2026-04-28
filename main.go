@@ -170,7 +170,9 @@ func main() {
 	// เลือกแฟ้มเป้าหมาย
 	// ============================================================================
 	projectPath := ""
-	labelselP := widget.NewLabel("🔴️")
+	labelSelectProject := widget.NewLabel("🔴️ เลือกโฟลเดอร์")
+	logSelectProject := widget.NewEntry()
+
 	selectBtn := widget.NewButton("Select Project", func() {
 		g := dialog.NewFolderOpen(func(uri fyne.ListableURI, err error) {
 			if uri == nil {
@@ -178,15 +180,15 @@ func main() {
 			}
 			projectPath = uri.Path()
 
-			labelselP.SetText("✅️")
-			logBox.SetText("📁 " + projectPath)
+			labelSelectProject.SetText("✅️ เลือกโฟลเดอร์")
+			logBox.SetText(projectPath)
+			logSelectProject.SetText(projectPath)
 
 		}, w)
 
 		g.Resize(fyne.NewSize(800, 600))
 		g.Show()
 	})
-
 	// ============================================================================
 	// Generate scrip Icons
 	// ============================================================================
@@ -278,14 +280,55 @@ func main() {
 		}
 		go copyAppImageTool(projectPath)
 	})
+	// ============================================================================
+	// Generate scrip Appimage Btn
+	// ============================================================================
+	labelScripAppimage := widget.NewLabel("🔴️")
+	scripimageBtn := widget.NewButton("Scrip Appimage", func() {
+		if projectPath == "" {
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
+			return
+		}
+		cfg := AppConfig{
+			Name:       name.Text,
+			Command:    command.Text,
+			Categories: categories.Text,
+		}
+		generateFile("templates/tmp_image/buildimage.tmpl",
+			filepath.Join(projectPath, "buildimage.sh"), cfg) //เอา scrip build appimage ออกมาไว้นอกแฟ้ม flatpak
 
+		logBox.SetText("✅️ Generated Scrip AppimageTool")
+		labelScripAppimage.SetText("✅️")
+	})
+	// ============================================================================
+	// build Appimage
+	// ============================================================================
+	buildimageBtn := widget.NewButton("Run Build", func() {
+
+		if projectPath == "" {
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
+
+			return
+		}
+
+		//  copy appimagetool (ถ้ามีฟังก์ชันนี้)
+		err := copyAppImageTool(projectPath)
+		if err != nil {
+			logBox.SetText("🔴️ คัดลอกล้มเหลว : " + err.Error())
+			return
+		}
+
+		//  run script
+		go runbuildimage(projectPath, logBox)
+
+		logBox.SetText("✅️ Build started in terminal...")
+	})
 	// ============================================================================
 	// Flatpak
 	// ============================================================================
 	// ============================================================================
 	// Generate scrip flatpak Btn
 	// ============================================================================
-	// 🔧 Generate
 	genscripflatpakBtn := widget.NewButton("Generate scrip Folder", func() {
 
 		if projectPath == "" {
@@ -363,8 +406,6 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-
-		//  run script
 		go runScripinstallflatpak(projectPath, logBox)
 
 		logBox.SetText("✅️ Install started in terminal...")
@@ -395,6 +436,25 @@ func main() {
 	// หน้าแรก (ต้อนรับ)
 	welcome := widget.NewLabel("")
 	setContent(welcome)
+
+	// ปุ่ม .image
+	btnimage := widget.NewButton("Image", func() {
+		/*	buttons := container.NewGridWithColumns(2,
+			widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
+			widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
+			widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
+			widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
+		) */
+		setContent(container.NewVBox(
+			widget.NewLabel("AppimageTool"),
+			name, command,
+			categories,
+			catmenu,
+			//buttons,
+			coppyimagebtn, scripimageBtn, buildimageBtn,
+		))
+
+	})
 
 	// ปุ่ม btnflatpak
 	btnflatpak := widget.NewButton("Flatpak", func() {
@@ -433,22 +493,6 @@ func main() {
 		))
 	})
 
-	// ปุ่ม .image
-	btnimage := widget.NewButton("Image", func() {
-		/*	buttons := container.NewGridWithColumns(2,
-			widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
-			widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
-			widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
-			widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
-		) */
-		setContent(container.NewVBox(
-			widget.NewLabel("AppimageTool"),
-			//buttons,
-			coppyimagebtn,
-		))
-
-	})
-
 	// เมนูด้านซ้าย
 	leftMenu := container.NewBorder(
 
@@ -457,17 +501,23 @@ func main() {
 			widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 			//widget.NewSeparator(),
 			selectBtn,
+			container.NewHScroll(logSelectProject),
 			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
 			container.NewGridWithColumns(2, exBtn, resetExBtn),
 			//btnA,
 			//btnB,
 			//btnC,
 			//btnD,
+			//		labelSelectProject.SetText("✅️"+projectPath),
+
 			btnimage,
 			btnflatpak,
-			container.NewHBox(labelselP, widget.NewLabel("เลือกโฟลเดอร์")),
+			widget.NewLabel("logBox"),
 			//widget.NewSeparator(),
 			logBox,
+			widget.NewLabel("List"),
+			labelSelectProject,
+			labelScripAppimage,
 		),
 		container.NewGridWrap(fyne.NewSize(200, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
 		nil,

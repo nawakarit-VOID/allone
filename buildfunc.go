@@ -112,7 +112,6 @@ func runScripinstallflatpak(projectPath string, output *widget.Entry) {
 // ============================================================================
 // .image
 // ============================================================================
-
 func copyAppImageTool(projectPath string) error {
 	src := "./appimagetool/appimagetool-x86_64.AppImage"
 	dst := filepath.Join(projectPath, "appimagetool-x86_64.AppImage")
@@ -128,6 +127,31 @@ func copyAppImageTool(projectPath string) error {
 	}
 
 	return os.WriteFile(dst, data, 0755)
+}
+
+// ============================================================================
+// build image
+// ============================================================================
+func runbuildimage(projectPath string, output *widget.Entry) {
+
+	commands := [][]string{
+
+		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+	}
+
+	for _, c := range commands {
+		cmd := exec.Command(c[0], c[1:]...)
+		err := cmd.Start()
+		if err == nil {
+			output.SetText("✅️ opened terminal: " + c[0])
+			return
+		}
+	}
+
+	output.SetText("🔴️ no terminal found")
 }
 
 func showMsg(msg string) {

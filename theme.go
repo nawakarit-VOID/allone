@@ -28,13 +28,13 @@ func (m MyTheme) Color(name fyne.ThemeColorName, v fyne.ThemeVariant) color.Colo
 			return color.NRGBA{200, 200, 200, 50}
 
 		case theme.ColorNamePressed: //→ ตอนกด***
-			return color.NRGBA{191, 218, 255, 255}
+			return color.NRGBA{41, 246, 181, 255}
 
 		case theme.ColorNameHover: //→ ตอนเอาเมาส์ชี้
 			return color.NRGBA{255, 255, 255, 50}
 
 		case theme.ColorNameDisabledButton: //→ ปุ่มที่กดไม่ได้***
-			return color.NRGBA{255, 87, 34, 255}
+			return color.NRGBA{41, 246, 181, 255}
 
 		// 🧠 สถานะทั่วไป
 		case theme.ColorNameDisabled: // → สีของ element ที่ใช้ไม่ได้***
@@ -62,7 +62,7 @@ func (m MyTheme) Color(name fyne.ThemeColorName, v fyne.ThemeVariant) color.Colo
 			return color.NRGBA{46, 46, 51, 255}
 
 		case theme.ColorNameShadow: // → เงา
-			return color.NRGBA{255, 255, 255, 40}
+			return color.NRGBA{41, 246, 181, 10}
 
 			//⚠️ สถานะพิเศษ
 		case theme.ColorNameError: // → error (แดง)
@@ -90,13 +90,13 @@ func (m MyTheme) Color(name fyne.ThemeColorName, v fyne.ThemeVariant) color.Colo
 			return color.NRGBA{50, 50, 50, 50}
 
 		case theme.ColorNamePressed: //→ ตอนกด***
-			return color.NRGBA{191, 218, 255, 255}
+			return color.NRGBA{41, 246, 181, 255}
 
 		case theme.ColorNameHover: //→ ตอนเอาเมาส์ชี้
 			return color.NRGBA{255, 255, 255, 50}
 
 		case theme.ColorNameDisabledButton: //→ ปุ่มที่กดไม่ได้***
-			return color.NRGBA{255, 87, 34, 255}
+			return color.NRGBA{41, 246, 181, 255}
 
 		// 🧠 สถานะทั่วไป
 		case theme.ColorNameDisabled: // → สีของ element ที่ใช้ไม่ได้***
@@ -124,7 +124,7 @@ func (m MyTheme) Color(name fyne.ThemeColorName, v fyne.ThemeVariant) color.Colo
 			return color.NRGBA{230, 230, 230, 255}
 
 		case theme.ColorNameShadow: // → เงา
-			return color.NRGBA{255, 255, 255, 40}
+			return color.NRGBA{41, 246, 181, 10}
 
 			//⚠️ สถานะพิเศษ
 		case theme.ColorNameError: // → error (แดง)

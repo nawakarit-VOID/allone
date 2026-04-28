@@ -4,7 +4,6 @@ export PATH=/usr/local/go/bin:$PATH
 
 APP={{.Name}}
 EXEC={{.Command}}
-CATE={{.Categories}}
 
 echo "🔍 Checking..."
 
@@ -31,7 +30,7 @@ cp $EXEC $APP.AppDir/
 cat > $APP.AppDir/AppRun << 'EOF'
 #!/bin/bash
 HERE="$(dirname "$(readlink -f "$0")")"
-exec "$HERE/$EXEC"
+exec "$HERE/{{.Command}}"
 EOF
 
 chmod +x $APP.AppDir/AppRun
@@ -42,7 +41,7 @@ Name=$APP
 Exec=$EXEC
 Icon=$EXEC
 Type=Application
-Categories=$CATE
+Categories={{.Categories}}
 Terminal=false
 EOF
 
@@ -60,5 +59,12 @@ sleep 2
 
 echo "🧹 ลบ .AppDir..."
 rm -rf $APP.AppDir
+
+#echo "🧹 ลบ buildicons.sh..buildimage.sh..."
+#rm -rf buildicons.sh
+#rm -rf buildimage.sh
+#rm -rf appimagetool-x86_64.AppImage
+#rm -rf buildinstall.sh
+#rm -rf buildflatpak.sh
 
 echo "✅ เสร็จแล้ว"
