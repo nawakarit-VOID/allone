@@ -130,7 +130,7 @@ func main() {
 	timeEntry.SetPlaceHolder("HH:MM")
 
 	version := widget.NewEntry()
-	version.SetPlaceHolder("*V เช่น 1.0.0")
+	version.SetPlaceHolder("*Version เช่น 1.0.0")
 
 	desUpdate1 := widget.NewEntry()
 	desUpdate1.SetPlaceHolder("*อัพเดท 1")
@@ -193,7 +193,7 @@ func main() {
 	// ============================================================================
 	// Generate scrip Icons
 	// ============================================================================
-	labelScripIcons := widget.NewLabel("🔴️ สร้าง Scrip Icons")
+	labelScripIcons := widget.NewLabel("🔴️ Scrip Icons")
 
 	genscripiconsBtn := widget.NewButton("Scrip Icons", func() {
 		if projectPath == "" {
@@ -204,12 +204,12 @@ func main() {
 		generateFile("templates/tmp_icons/buildicons.tmpl",
 			filepath.Join(projectPath, "buildicons.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
 		logBox.SetText("✅️ Generated File - - buildicons - -")
-		labelScripIcons.SetText("✅️ สร้าง Scrip Icons")
+		labelScripIcons.SetText("✅️ Scrip Icons")
 	})
 	// ============================================================================
 	// Build Icons **ใช้ imagemagick
 	// ============================================================================
-	labelBuildIcons := widget.NewLabel("🔴️ สร้าง Icons")
+	labelBuildIcons := widget.NewLabel("🔴️ Icons")
 
 	buildIconsBtn := widget.NewButton("Build Icons", func() {
 
@@ -222,7 +222,7 @@ func main() {
 		go runScriptbuildIcons(projectPath, logBox)
 
 		logBox.SetText("✅️ Build started in terminal...")
-		labelBuildIcons.SetText("✅️ สร้าง Icons")
+		labelBuildIcons.SetText("✅️ Icons")
 	})
 	// ============================================================================
 	// test ด่วน
@@ -280,22 +280,22 @@ func main() {
 	// ============================================================================
 	// coppy image master to project
 	// ============================================================================
-	labelCoppyimage := widget.NewLabel("🔴️ Coppy AppimageTool")
+	labelCoppyimage := widget.NewLabel("🔴️ Coppy Appimage")
 
-	coppyimagebtn := widget.NewButton("Coppy AppimageTool", func() {
+	coppyimagebtn := widget.NewButton("Coppy Appimage", func() {
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 		go copyAppImageTool(projectPath)
 
-		logBox.SetText("✅️ Coppy AppimageTool")
-		labelCoppyimage.SetText("✅️ Coppy AppimageTool")
+		logBox.SetText("✅️ Coppy Appimage")
+		labelCoppyimage.SetText("✅️ Coppy Appimage")
 	})
 	// ============================================================================
 	// Generate scrip Appimage Btn
 	// ============================================================================
-	labelScripAppimage := widget.NewLabel("🔴️ สร้าง Scrip Appimage")
+	labelScripAppimage := widget.NewLabel("🔴️ Scrip Appimage")
 
 	scripimageBtn := widget.NewButton("Scrip Appimage", func() {
 		if projectPath == "" {
@@ -310,8 +310,8 @@ func main() {
 		generateFile("templates/tmp_image/buildimage.tmpl",
 			filepath.Join(projectPath, "buildimage.sh"), cfg) //เอา scrip build appimage ออกมาไว้นอกแฟ้ม flatpak
 
-		logBox.SetText("✅️ สร้าง Scrip Appimage")
-		labelScripAppimage.SetText("✅️ สร้าง Scrip Appimage")
+		logBox.SetText("✅️ Scrip Appimage")
+		labelScripAppimage.SetText("✅️ Scrip Appimage")
 	})
 	// ============================================================================
 	// pack Appimage
@@ -346,7 +346,7 @@ func main() {
 	// ============================================================================
 	// Generate scrip flatpak Btn
 	// ============================================================================
-	labelGeneratescripflatpak := widget.NewLabel("🔴️ สร้าง Scrip flatpak")
+	labelGeneratescripflatpak := widget.NewLabel("🔴️ Scrip flatpak")
 
 	genscripflatpakBtn := widget.NewButton("Generate scrip flatpak", func() {
 
@@ -397,8 +397,8 @@ func main() {
 		generateFile("templates/tmp_flatpak/buildinstall.tmpl",
 			filepath.Join(projectPath, "buildinstall.sh"), cfg)
 
-		logBox.SetText("✅️ สร้าง Scrip flatpak")
-		labelGeneratescripflatpak.SetText("✅️ สร้าง Scrip flatpak")
+		logBox.SetText("✅️ Scrip flatpak")
+		labelGeneratescripflatpak.SetText("✅️ Scrip flatpak")
 	})
 
 	// ============================================================================
@@ -523,6 +523,18 @@ func main() {
 	})
 
 	// เมนูด้านซ้าย
+	// ซ้ายย่อย
+	labelicons := container.NewHBox(labelScripIcons, labelBuildIcons)
+
+	labelappimage := container.NewVBox(
+		container.NewHBox(labelCoppyimage, labelScripAppimage),
+		container.NewHBox(labelpackimage))
+
+	labelflatpak := container.NewVBox(
+		container.NewHBox(labelGeneratescripflatpak, labelPackFlatpak),
+		labelInstallFlatpak)
+
+	// ซ้ายหลัก
 	leftMenu := container.NewBorder(
 
 		container.NewVBox(
@@ -533,33 +545,24 @@ func main() {
 			container.NewHScroll(logSelectProject),
 			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
 			container.NewGridWithColumns(2, exBtn, resetBtn),
-			//btnA,
-			//btnB,
-			//btnC,
-			//btnD,
 			//		labelSelectProject.SetText("✅️"+projectPath),
-
 			btnimage,
 			btnflatpak,
-			widget.NewLabel("logBox"),
-			//widget.NewSeparator(),
 			logBox,
-			widget.NewLabel("List"),
-			labelSelectProject,
-			labelScripIcons,
-			labelBuildIcons,
-			labelCoppyimage,
-			labelScripAppimage,
-			labelpackimage,
-			labelGeneratescripflatpak,
-			labelPackFlatpak,
-			labelInstallFlatpak,
-			labelTime,
 		),
-		container.NewGridWrap(fyne.NewSize(250, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
+		//container.NewGridWrap(fyne.NewSize(250, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
+		widget.NewButton("🔴️ ออก", func() { a.Quit() }),
 		nil,
 		nil,
-		nil,
+		container.NewVScroll(
+			container.NewVBox(
+				widget.NewCard("List", "", labelSelectProject),
+				widget.NewCard("Icons", "", labelicons),
+				widget.NewCard("AppimageTool", "", labelappimage),
+				widget.NewCard("Flatpak", "", labelflatpak),
+				widget.NewCard("Time", "", labelTime),
+				widget.NewCard("EXE", "", nil),
+			)),
 	)
 	// จัด layout แบบ Border (ซ้าย : ขวา)
 	mainContainer := container.NewBorder(
