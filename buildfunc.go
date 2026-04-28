@@ -132,7 +132,7 @@ func copyAppImageTool(projectPath string) error {
 // ============================================================================
 // build image
 // ============================================================================
-func runbuildimage(projectPath string, output *widget.Entry) {
+func packimage(projectPath string, output *widget.Entry) {
 
 	commands := [][]string{
 

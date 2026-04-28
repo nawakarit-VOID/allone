@@ -171,6 +171,7 @@ func main() {
 	// ============================================================================
 	projectPath := ""
 	labelSelectProject := widget.NewLabel("🔴️ เลือกโฟลเดอร์")
+	//labelSelectProject.SetText("✅️ เลือกโฟลเดอร์")
 	logSelectProject := widget.NewEntry()
 
 	selectBtn := widget.NewButton("Select Project", func() {
@@ -192,7 +193,9 @@ func main() {
 	// ============================================================================
 	// Generate scrip Icons
 	// ============================================================================
-	genscripiconsBtn := widget.NewButton("scrip Icons", func() {
+	labelScripIcons := widget.NewLabel("🔴️ สร้าง Scrip Icons")
+
+	genscripiconsBtn := widget.NewButton("Scrip Icons", func() {
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
@@ -201,10 +204,13 @@ func main() {
 		generateFile("templates/tmp_icons/buildicons.tmpl",
 			filepath.Join(projectPath, "buildicons.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
 		logBox.SetText("✅️ Generated File - - buildicons - -")
+		labelScripIcons.SetText("✅️ สร้าง Scrip Icons")
 	})
 	// ============================================================================
 	// Build Icons **ใช้ imagemagick
 	// ============================================================================
+	labelBuildIcons := widget.NewLabel("🔴️ สร้าง Icons")
+
 	buildIconsBtn := widget.NewButton("Build Icons", func() {
 
 		if projectPath == "" {
@@ -216,6 +222,7 @@ func main() {
 		go runScriptbuildIcons(projectPath, logBox)
 
 		logBox.SetText("✅️ Build started in terminal...")
+		labelBuildIcons.SetText("✅️ สร้าง Icons")
 	})
 	// ============================================================================
 	// test ด่วน
@@ -243,9 +250,9 @@ func main() {
 		logBox.SetText("✅️ Example now")
 	})
 	// ============================================================================
-	// Reset EX
+	// Reset
 	// ============================================================================
-	resetExBtn := widget.NewButton("ResetEx.", func() {
+	resetBtn := widget.NewButton("Reset", func() {
 		name.SetText("")
 		appID.SetText("com.nawakarit.")
 		command.SetText("")
@@ -265,7 +272,7 @@ func main() {
 		namePix4.SetText("")
 		namePix5.SetText("")
 
-		logBox.SetText("✅️ Reset example")
+		logBox.SetText("✅️ Reset")
 	})
 	// ============================================================================
 	// AppimageTool
@@ -273,17 +280,23 @@ func main() {
 	// ============================================================================
 	// coppy image master to project
 	// ============================================================================
-	coppyimagebtn := widget.NewButton("Coppy image", func() {
+	labelCoppyimage := widget.NewLabel("🔴️ Coppy AppimageTool")
+
+	coppyimagebtn := widget.NewButton("Coppy AppimageTool", func() {
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 		go copyAppImageTool(projectPath)
+
+		logBox.SetText("✅️ Coppy AppimageTool")
+		labelCoppyimage.SetText("✅️ Coppy AppimageTool")
 	})
 	// ============================================================================
 	// Generate scrip Appimage Btn
 	// ============================================================================
-	labelScripAppimage := widget.NewLabel("🔴️")
+	labelScripAppimage := widget.NewLabel("🔴️ สร้าง Scrip Appimage")
+
 	scripimageBtn := widget.NewButton("Scrip Appimage", func() {
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
@@ -297,13 +310,15 @@ func main() {
 		generateFile("templates/tmp_image/buildimage.tmpl",
 			filepath.Join(projectPath, "buildimage.sh"), cfg) //เอา scrip build appimage ออกมาไว้นอกแฟ้ม flatpak
 
-		logBox.SetText("✅️ Generated Scrip AppimageTool")
-		labelScripAppimage.SetText("✅️")
+		logBox.SetText("✅️ สร้าง Scrip Appimage")
+		labelScripAppimage.SetText("✅️ สร้าง Scrip Appimage")
 	})
 	// ============================================================================
-	// build Appimage
+	// pack Appimage
 	// ============================================================================
-	buildimageBtn := widget.NewButton("Run Build", func() {
+	labelpackimage := widget.NewLabel("🔴️ Pack Image")
+
+	packimageBtn := widget.NewButton("Pack Image", func() {
 
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
@@ -319,9 +334,11 @@ func main() {
 		}
 
 		//  run script
-		go runbuildimage(projectPath, logBox)
+		go packimage(projectPath, logBox)
 
-		logBox.SetText("✅️ Build started in terminal...")
+		logBox.SetText("✅️ Pack Image started in terminal...")
+		labelpackimage.SetText("✅️ Pack Image")
+
 	})
 	// ============================================================================
 	// Flatpak
@@ -329,7 +346,9 @@ func main() {
 	// ============================================================================
 	// Generate scrip flatpak Btn
 	// ============================================================================
-	genscripflatpakBtn := widget.NewButton("Generate scrip Folder", func() {
+	labelGeneratescripflatpak := widget.NewLabel("🔴️ สร้าง Scrip flatpak")
+
+	genscripflatpakBtn := widget.NewButton("Generate scrip flatpak", func() {
 
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
@@ -378,13 +397,16 @@ func main() {
 		generateFile("templates/tmp_flatpak/buildinstall.tmpl",
 			filepath.Join(projectPath, "buildinstall.sh"), cfg)
 
-		logBox.SetText("✅️ Generated File Flatpak - - and - - ✅️ File Scrip Build Flatpak\n")
+		logBox.SetText("✅️ สร้าง Scrip flatpak")
+		labelGeneratescripflatpak.SetText("✅️ สร้าง Scrip flatpak")
 	})
 
 	// ============================================================================
 	// ปุ่ม Build flatpak
 	// ============================================================================
-	buildflatpakBtn := widget.NewButton("7 - Run Build Flatpak", func() {
+	labelPackFlatpak := widget.NewLabel("🔴️ Pack Flatpak")
+
+	buildflatpakBtn := widget.NewButton("Pack Flatpak", func() {
 
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
@@ -394,13 +416,16 @@ func main() {
 		//  run script
 		go runScriptbuildflatpak(projectPath, logBox)
 
-		logBox.SetText("✅️ Build started in terminal...")
+		logBox.SetText("✅️ Pack Flatpak started in terminal...")
+		labelPackFlatpak.SetText("✅️ Pack Flatpak")
 	})
 
 	// ============================================================================
 	// ปุ่ม Install
 	// ============================================================================
-	installBtn := widget.NewButton("8 - Install Flatpak", func() {
+	labelInstallFlatpak := widget.NewLabel("🔴️ ติดตั้ง Flatpak")
+
+	installBtn := widget.NewButton("Install Flatpak", func() {
 
 		if projectPath == "" {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
@@ -408,17 +433,21 @@ func main() {
 		}
 		go runScripinstallflatpak(projectPath, logBox)
 
-		logBox.SetText("✅️ Install started in terminal...")
+		logBox.SetText("✅️ ติดตั้ง Flatpak started in terminal...")
+		labelInstallFlatpak.SetText("✅️ ติดตั้ง Flatpak")
 	})
 
 	// ============================================================================
 	// ปุ่มเพิ่มวัน เวลา
 	// ============================================================================
+	labelTime := widget.NewLabel("🔴️ เวลาปัจจุบัน")
+
 	nowBtn := widget.NewButton("เวลาปัจจุบัน", func() {
 		now := time.Now()
 
 		date.SetText(now.Format("2006-01-02"))
 		timeEntry.SetText(now.Format("15:04"))
+		labelTime.SetText("✅️ เวลาปัจจุบัน")
 	})
 
 	// ============================================================================
@@ -451,7 +480,7 @@ func main() {
 			categories,
 			catmenu,
 			//buttons,
-			coppyimagebtn, scripimageBtn, buildimageBtn,
+			coppyimagebtn, scripimageBtn, packimageBtn,
 		))
 
 	})
@@ -503,7 +532,7 @@ func main() {
 			selectBtn,
 			container.NewHScroll(logSelectProject),
 			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
-			container.NewGridWithColumns(2, exBtn, resetExBtn),
+			container.NewGridWithColumns(2, exBtn, resetBtn),
 			//btnA,
 			//btnB,
 			//btnC,
@@ -517,15 +546,22 @@ func main() {
 			logBox,
 			widget.NewLabel("List"),
 			labelSelectProject,
+			labelScripIcons,
+			labelBuildIcons,
+			labelCoppyimage,
 			labelScripAppimage,
+			labelpackimage,
+			labelGeneratescripflatpak,
+			labelPackFlatpak,
+			labelInstallFlatpak,
+			labelTime,
 		),
-		container.NewGridWrap(fyne.NewSize(200, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
+		container.NewGridWrap(fyne.NewSize(250, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
 		nil,
 		nil,
 		nil,
 	)
 	// จัด layout แบบ Border (ซ้าย : ขวา)
-	// ไม่มีเส้นแบ่ง ไม่มีพื้นหลังแยก
 	mainContainer := container.NewBorder(
 		nil,
 		nil,
@@ -537,59 +573,3 @@ func main() {
 	w.Resize(fyne.NewSize(850, 850))
 	w.ShowAndRun()
 }
-
-/*// --- สร้างเมนูด้านซ้าย ---
-// ปุ่ม A (แสดงรายละเอียด)
-btnA := widget.NewButton("📁 รายละเอียด A", func() {
-	detail := widget.NewCard("รายละเอียด A",
-		"ข้อมูลเพิ่มเติม",
-		widget.NewLabel("นี่คือรายละเอียดของเมนู A\nสามารถเพิ่มข้อความหรือ input ได้"))
-	setContent(detail)
-})
-
-// ปุ่ม B (มีปุ่มย่อยในเนื้อหา)
-btnB := widget.NewButton("⚙️ ตั้งค่า B", func() {
-	subBtn1 := widget.NewButton("ตัวเลือกที่ 1", func() {
-		widget.NewLabel("เลือก 1")
-	})
-	subBtn2 := widget.NewButton("ตัวเลือกที่ 2", func() {
-		widget.NewLabel("เลือก 2")
-	})
-	subForm := container.NewVBox(
-		widget.NewLabel("เลือกการทำงานเพิ่มเติม:"),
-		subBtn1,
-		subBtn2,
-		widget.NewSeparator(),
-		widget.NewLabel("หรือกรอกข้อมูล:"),
-		widget.NewEntry(),
-	)
-	setContent(subForm)
-})
-
-// ปุ่ม C (แสดงฟอร์ม)
-btnC := widget.NewButton("📝 ฟอร์ม C", func() {
-	form := widget.NewForm(
-		widget.NewFormItem("ชื่อ", widget.NewEntry()),
-		widget.NewFormItem("อีเมล", widget.NewEntry()),
-	)
-	form.SubmitText = "บันทึก"
-	form.OnSubmit = func() {
-		setContent(widget.NewLabel("บันทึกสำเร็จ!"))
-	}
-	setContent(form)
-})
-
-// ปุ่ม D (แสดงปุ่มย่อยหลายปุ่ม)
-btnD := widget.NewButton("🔘 เมนู D (ปุ่มย่อย)", func() {
-	buttons := container.NewGridWithColumns(2,
-		widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
-		widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
-		widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
-		widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
-	)
-	setContent(container.NewVBox(
-		widget.NewLabel("เมนูย่อยของ D:"),
-		buttons,
-	))
-})
-*/
