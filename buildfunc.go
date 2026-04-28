@@ -28,12 +28,12 @@ func runScriptbuildIcons(projectPath string, output *widget.Entry) {
 		cmd := exec.Command(c[0], c[1:]...)
 		err := cmd.Start()
 		if err == nil {
-			output.SetText("🚀 opened terminal: " + c[0])
+			output.SetText("✅️ opened terminal: " + c[0])
 			return
 		}
 	}
 
-	output.SetText("❌ no terminal found")
+	output.SetText("🔴️ no terminal found")
 }
 
 // ============================================================================
@@ -74,12 +74,12 @@ func runScriptbuildflatpak(projectPath string, output *widget.Entry) {
 		cmd := exec.Command(c[0], c[1:]...)
 		err := cmd.Start()
 		if err == nil {
-			output.SetText("🚀 opened terminal: " + c[0])
+			output.SetText("✅️ opened terminal: " + c[0])
 			return
 		}
 	}
 
-	output.SetText("❌ no terminal found")
+	output.SetText("🔴️ no terminal found")
 }
 
 // ============================================================================
@@ -98,12 +98,12 @@ func runScripinstallflatpak(projectPath string, output *widget.Entry) {
 		cmd := exec.Command(c[0], c[1:]...)
 		err := cmd.Start()
 		if err == nil {
-			output.SetText("🚀 opened terminal: " + c[0])
+			output.SetText("✅️ opened terminal: " + c[0])
 			return
 		}
 	}
 
-	output.SetText("❌ no terminal found")
+	output.SetText("🔴️ no terminal found")
 }
 
 // ============================================================================

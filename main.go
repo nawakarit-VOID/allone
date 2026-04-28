@@ -164,27 +164,35 @@ func main() {
 	// เลือกแฟ้มเป้าหมาย
 	// ============================================================================
 	projectPath := ""
+	labelselP := widget.NewLabel("🔴️")
 	selectBtn := widget.NewButton("Select Project", func() {
-		dialog.ShowFolderOpen(func(uri fyne.ListableURI, err error) {
+		g := dialog.NewFolderOpen(func(uri fyne.ListableURI, err error) {
 			if uri == nil {
 				return
 			}
 			projectPath = uri.Path()
-			logBox.SetText("📁 Selected: " + projectPath)
+
+			labelselP.SetText("✅️")
+			logBox.SetText("📁 " + projectPath)
+
 		}, w)
+
+		g.Resize(fyne.NewSize(800, 600))
+		g.Show()
 	})
+
 	// ============================================================================
 	// Generate scrip Icons
 	// ============================================================================
 	genscripiconsBtn := widget.NewButton("scrip Icons", func() {
 		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 		cfg := AppConfig{}
 		generateFile("templates/tmp_icons/buildicons.tmpl",
 			filepath.Join(projectPath, "buildicons.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
-		logBox.SetText("✅ Generated File - - buildicons - -")
+		logBox.SetText("✅️ Generated File - - buildicons - -")
 	})
 	// ============================================================================
 	// Build Icons **ใช้ imagemagick
@@ -192,14 +200,14 @@ func main() {
 	buildIconsBtn := widget.NewButton("Build Icons", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
 		//  run script
 		go runScriptbuildIcons(projectPath, logBox)
 
-		logBox.SetText("🚀 Build started in terminal...")
+		logBox.SetText("✅️ Build started in terminal...")
 	})
 	// ============================================================================
 	// test ด่วน
@@ -224,7 +232,7 @@ func main() {
 		namePix4.SetText("test_2026-04-06_21-07-08")
 		namePix5.SetText("test_2026-04-06_21-06-09")
 
-		logBox.SetText("✅ Example now")
+		logBox.SetText("✅️ Example now")
 	})
 	// ============================================================================
 	// Reset EX
@@ -249,7 +257,7 @@ func main() {
 		namePix4.SetText("")
 		namePix5.SetText("")
 
-		logBox.SetText("✅ Reset example")
+		logBox.SetText("✅️ Reset example")
 	})
 	// ============================================================================
 	// AppimageTool
@@ -259,7 +267,7 @@ func main() {
 	// ============================================================================
 	coppyimagebtn := widget.NewButton("Coppy image", func() {
 		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 		go copyAppImageTool(projectPath)
@@ -275,7 +283,7 @@ func main() {
 	genscripflatpakBtn := widget.NewButton("Generate scrip Folder", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
@@ -321,7 +329,7 @@ func main() {
 		generateFile("templates/tmp_flatpak/buildinstall.tmpl",
 			filepath.Join(projectPath, "buildinstall.sh"), cfg)
 
-		logBox.SetText("✅ Generated File Flatpak - - and - - ✅ File Scrip Build Flatpak\n")
+		logBox.SetText("✅️ Generated File Flatpak - - and - - ✅️ File Scrip Build Flatpak\n")
 	})
 
 	// ============================================================================
@@ -330,14 +338,14 @@ func main() {
 	buildflatpakBtn := widget.NewButton("7 - Run Build Flatpak", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
 		//  run script
 		go runScriptbuildflatpak(projectPath, logBox)
 
-		logBox.SetText("🚀 Build started in terminal...")
+		logBox.SetText("✅️ Build started in terminal...")
 	})
 
 	// ============================================================================
@@ -346,14 +354,14 @@ func main() {
 	installBtn := widget.NewButton("8 - Install Flatpak", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ โปรดเลือกโฟลเดอร์โปรเจค")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
 		//  run script
 		go runScripinstallflatpak(projectPath, logBox)
 
-		logBox.SetText("🚀 Install started in terminal...")
+		logBox.SetText("✅️ Install started in terminal...")
 	})
 
 	// ============================================================================
@@ -390,9 +398,10 @@ func main() {
 			container.NewVBox(
 
 				container.NewGridWithColumns(2, name, appID),
-				container.NewGridWithColumns(2, command, categories),
+				container.NewGridWithColumns(2, command, developer),
+				categories,
 				catmenu,
-				container.NewGridWithColumns(2, developer, version),
+				container.NewGridWithColumns(2, version),
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
 				summary, description,
 
@@ -450,10 +459,11 @@ func main() {
 			//btnD,
 			btnimage,
 			btnflatpak,
+			container.NewHBox(labelselP, widget.NewLabel("เลือกโฟลเดอร์")),
 			//widget.NewSeparator(),
 			logBox,
 		),
-		container.NewGridWrap(fyne.NewSize(200, 35), widget.NewButton("🚪 ออก", func() { a.Quit() })),
+		container.NewGridWrap(fyne.NewSize(200, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
 		nil,
 		nil,
 		nil,
