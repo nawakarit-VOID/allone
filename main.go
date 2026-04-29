@@ -8,6 +8,7 @@ import (
 	_ "embed"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -97,42 +98,104 @@ func main() {
 
 	categories := widget.NewEntry()
 	categories.SetPlaceHolder("*Utility;")
+	/*
+		catmenu := container.NewVScroll(widget.NewCheckGroup(
+			[]string{
+				"AudioVideo",
+				"Audio",
+				"Video",
+				"Player",
+				"Recorder",
+				"Mixer",
+				"Development",
+				"IDE",
+				"Debugger",
+				"VersionControl",
+				"Graphics",
+				"2DGraphics",
+				"RasterGraphics",
+				"VectorGraphics",
+				"Photography",
+				"Network",
+				"WebBrowser",
+				"Email",
+				"IRCClient",
+				"FileTransfer",
+				"Utility",
+				"Office",
+				"Game",
+				"System"},
 
-	catmenu := container.NewVScroll(widget.NewCheckGroup(
-		[]string{
-			"AudioVideo",
-			"Audio",
-			"Video",
-			"Player",
-			"Recorder",
-			"Mixer",
-			"Development",
-			"IDE",
-			"Debugger",
-			"VersionControl",
-			"Graphics",
-			"2DGraphics",
-			"RasterGraphics",
-			"VectorGraphics",
-			"Photography",
-			"Network",
-			"WebBrowser",
-			"Email",
-			"IRCClient",
-			"FileTransfer",
-			"Utility",
-			"Office",
-			"Game",
-			"System"},
-		func(selected []string) {
-			if len(selected) == 0 {
-				categories.SetText("ยังไม่ได้เลือก")
-				return
+			func(selected []string) {
+				if len(selected) == 0 {
+					categories.SetText("ยังไม่ได้เลือก")
+					return
+				}
+				categories.SetText(strings.Join(selected, ";") + ";")
+			},
+		),
+		)
+	*/
+	// เก็บ state
+	selected := make(map[string]bool)
+
+	// parent map
+	parentMap := map[string]string{
+		"Audio":    "AudioVideo",
+		"Video":    "AudioVideo",
+		"Player":   "AudioVideo",
+		"Recorder": "AudioVideo",
+		"Mixer":    "AudioVideo",
+
+		"IDE":            "Development",
+		"Debugger":       "Development",
+		"VersionControl": "Development",
+
+		"2DGraphics":     "Graphics",
+		"RasterGraphics": "Graphics",
+		"VectorGraphics": "Graphics",
+		"Photography":    "Graphics",
+
+		"WebBrowser":   "Network",
+		"Email":        "Network",
+		"IRCClient":    "Network",
+		"FileTransfer": "Network",
+	}
+
+	// อัปเดต output
+	updateCategories := func() {
+		set := make(map[string]bool)
+
+		for k, v := range selected {
+			if v {
+				set[k] = true
+				if p, ok := parentMap[k]; ok {
+					set[p] = true
+				}
 			}
-			categories.SetText(strings.Join(selected, ";") + ";")
-		},
-	),
-	)
+		}
+
+		if len(set) == 0 {
+			categories.SetText("")
+			return
+		}
+
+		var result []string
+		for k := range set {
+			result = append(result, k)
+		}
+
+		sort.Strings(result)
+		categories.SetText(strings.Join(result, ";") + ";")
+	}
+
+	// สร้าง checkbox
+	makeCheck := func(name string) *widget.Check {
+		return widget.NewCheck(name, func(checked bool) {
+			selected[name] = checked
+			updateCategories()
+		})
+	}
 
 	summary := widget.NewEntry()
 	summary.SetPlaceHolder("*Short summary - คุณบัติของแอพ")
@@ -644,6 +707,54 @@ func main() {
 	setContent(welcome)
 
 	// ============================================================================
+	// Check categories
+	// ============================================================================
+	catmenu := container.NewVScroll(container.NewVBox(
+
+		widget.NewLabel("🎵 Audio / Video"),
+		//makeCheck("AudioVideo"),
+		makeCheck("Audio"),
+		makeCheck("Video"),
+		makeCheck("Player"),
+		makeCheck("Recorder"),
+		makeCheck("Mixer"),
+
+		widget.NewSeparator(),
+
+		widget.NewLabel("💻 Development"),
+		//makeCheck("Development"),
+		makeCheck("IDE"),
+		makeCheck("Debugger"),
+		makeCheck("VersionControl"),
+
+		widget.NewSeparator(),
+
+		widget.NewLabel("🎨 Graphics"),
+		//makeCheck("Graphics"),
+		makeCheck("2DGraphics"),
+		makeCheck("RasterGraphics"),
+		makeCheck("VectorGraphics"),
+		makeCheck("Photography"),
+
+		widget.NewSeparator(),
+
+		widget.NewLabel("🌐 Network"),
+		//makeCheck("Network"),
+		makeCheck("WebBrowser"),
+		makeCheck("Email"),
+		makeCheck("IRCClient"),
+		makeCheck("FileTransfer"),
+
+		widget.NewSeparator(),
+
+		widget.NewLabel("📦 Other"),
+		makeCheck("Utility"),
+		makeCheck("Office"),
+		makeCheck("Game"),
+		makeCheck("System"),
+	))
+
+	// ============================================================================
 	// Appimage
 	// ============================================================================
 	// ปุ่ม .image
@@ -654,7 +765,6 @@ func main() {
 				categories,
 				container.NewGridWithColumns(2,
 					container.NewVScroll(catmenu),
-					//catmenu,
 					container.NewVBox(coppyimagebtn, scripimageBtn, packimageBtn)),
 			))
 		setContent(container.NewBorder(
@@ -731,6 +841,7 @@ func main() {
 			EXE,
 		))
 	})
+
 	// ============================================================================
 	// เมนูหลัก
 	// ============================================================================
