@@ -40,6 +40,12 @@ type AppConfig struct {
 	NamePix3    string
 	NamePix4    string
 	NamePix5    string
+
+	//exe
+	CompanyName string
+	Fileversion string
+	Years       string
+	Licenseexe  string
 }
 
 // โหลด icon
@@ -160,6 +166,34 @@ func main() {
 
 	namePix5 := widget.NewEntry()
 	namePix5.SetPlaceHolder("*5.เฉพาะชื่อรูป (png, วางข้าง main)")
+
+	//exe
+	companyName := widget.NewEntry()
+	companyName.SetText("Nawakarit")
+	companyName.SetPlaceHolder("*ชื่อบริษัท")
+
+	fileversion := widget.NewEntry()
+	fileversion.SetText("1,1,1,1")
+	fileversion.SetPlaceHolder("*version (exe) เช่น 1,1,1,1")
+
+	years := widget.NewEntry()
+	years.SetPlaceHolder("*20XX")
+	years1 := container.NewGridWrap(fyne.NewSize(100, 35), years)
+	//years := widget.NewLabel("")
+
+	month := widget.NewEntry()
+	month.SetPlaceHolder("*01-12")
+	month1 := container.NewGridWrap(fyne.NewSize(80, 35), month)
+	//month := widget.NewLabel("")
+
+	days := widget.NewEntry()
+	days.SetPlaceHolder("*01-31")
+	days1 := container.NewGridWrap(fyne.NewSize(80, 35), days)
+	//days := widget.NewLabel("")
+
+	licenseexe := widget.NewEntry()
+	licenseexe.SetText("GNU General Public License v3.0")
+	licenseexe.SetPlaceHolder("*ใส่ประเภท license *ถ้าต้องการ")
 
 	// log box
 	logBox := widget.NewMultiLineEntry()
@@ -451,6 +485,63 @@ func main() {
 	})
 
 	// ============================================================================
+	// Generate scrip EXE Btn
+	// ============================================================================
+	genscripexeBtn := widget.NewButton("Generate scrip EXE", func() {
+
+		if projectPath == "" {
+			logBox.SetText("❌ Please select project folder")
+			return
+		}
+
+		cfg := AppConfig{
+			Name:    name.Text,
+			AppID:   appID.Text,
+			Version: version.Text,
+
+			//exe
+			CompanyName: companyName.Text,
+			Fileversion: fileversion.Text,
+			Years:       years.Text,
+			Licenseexe:  licenseexe.Text,
+		}
+
+		//flatpakPath := projectPath + "/" + "flatpak"
+		//os.MkdirAll(flatpakPath, 0755)
+
+		generateFile("templates//tmp_exe/app.rc.tmpl",
+			filepath.Join(projectPath, "app.rc"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม
+
+		generateFile("templates//tmp_exe/buildexe.tmpl",
+			filepath.Join(projectPath, "buildexe.sh"), cfg)
+
+		generateFile("templates//tmp_exe/FyneApp.toml.tmpl",
+			filepath.Join(projectPath, "FyneApp.toml"), cfg)
+
+		//now := time.Now()
+		//date.SetText(now.Format("2006-01-02"))
+		//timeEntry.SetText(now.Format("15:04"))
+		//years.SetText(now.Format("2006"))
+
+		logBox.SetText("✅ Generated scrip exe")
+	})
+	// ============================================================================
+	// ปุ่ม Build EXE
+	// ============================================================================
+	buildexe := widget.NewButton("Build EXE", func() {
+
+		if projectPath == "" {
+			logBox.SetText("❌ select folder first")
+			return
+		}
+
+		//  run script
+		go buildexe(projectPath, logBox)
+
+		logBox.SetText("🚀 Build started in terminal...")
+	})
+
+	// ============================================================================
 	// จัดหน้า..มัน
 	// ============================================================================
 	// สร้างพื้นที่แสดงเนื้อหาหลัก (ด้านขวา)
@@ -466,14 +557,11 @@ func main() {
 	welcome := widget.NewLabel("")
 	setContent(welcome)
 
+	// ============================================================================
+	// Appimage
+	// ============================================================================
 	// ปุ่ม .image
 	btnimage := widget.NewButton("Image", func() {
-		/*	buttons := container.NewGridWithColumns(2,
-			widget.NewButton("ตัวเลือก Alpha", func() { showMsg("เลือก Alpha") }),
-			widget.NewButton("ตัวเลือก Beta", func() { showMsg("เลือก Beta") }),
-			widget.NewButton("ตัวเลือก Gamma", func() { showMsg("เลือก Gamma") }),
-			widget.NewButton("ตัวเลือก Delta", func() { showMsg("เลือก Delta") }),
-		) */
 		setContent(container.NewVBox(
 			widget.NewLabel("AppimageTool"),
 			name, command,
@@ -482,9 +570,10 @@ func main() {
 			//buttons,
 			coppyimagebtn, scripimageBtn, packimageBtn,
 		))
-
 	})
-
+	// ============================================================================
+	// Flatpak
+	// ============================================================================
 	// ปุ่ม btnflatpak
 	btnflatpak := widget.NewButton("Flatpak", func() {
 
@@ -522,8 +611,33 @@ func main() {
 		))
 	})
 
+	// ============================================================================
+	// EXE
+	// ============================================================================
+	// ปุ่ม EXE
+	btnEXE := widget.NewButton("EXE", func() {
+		setContent(container.NewVBox(
+			widget.NewLabel("EXE"),
+			name,
+			appID,
+			companyName,
+			licenseexe,
+			version,
+			fileversion,
+
+			years1,
+			month1,
+			days1,
+
+			genscripexeBtn,
+			buildexe,
+		))
+	})
+	// ============================================================================
+	// เมนูหลัก
+	// ============================================================================
 	// เมนูด้านซ้าย
-	// ซ้ายย่อย
+	// ซ้ายย่อย //label*
 	labelicons := container.NewHBox(labelScripIcons, labelBuildIcons)
 
 	labelappimage := container.NewVBox(
@@ -536,18 +650,15 @@ func main() {
 
 	// ซ้ายหลัก
 	leftMenu := container.NewBorder(
-
 		container.NewVBox(
-
 			widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
-			//widget.NewSeparator(),
 			selectBtn,
 			container.NewHScroll(logSelectProject),
 			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
 			container.NewGridWithColumns(2, exBtn, resetBtn),
-			//		labelSelectProject.SetText("✅️"+projectPath),
 			btnimage,
 			btnflatpak,
+			btnEXE,
 			logBox,
 		),
 		//container.NewGridWrap(fyne.NewSize(250, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
@@ -564,7 +675,8 @@ func main() {
 				widget.NewCard("EXE", "", nil),
 			)),
 	)
-	// จัด layout แบบ Border (ซ้าย : ขวา)
+
+	// จัด layout แบบ Border (ซ้าย : ขวา) จัดหน้ามัน
 	mainContainer := container.NewBorder(
 		nil,
 		nil,

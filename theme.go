@@ -114,7 +114,7 @@ func (m MyTheme) Color(name fyne.ThemeColorName, v fyne.ThemeVariant) color.Colo
 			return color.NRGBA{50, 50, 50, 50}
 
 		case theme.ColorNamePlaceHolder: // → ตัวอักษร placeholder***
-			return color.NRGBA{255, 0, 0, 255}
+			return color.NRGBA{41, 246, 181, 255}
 
 		// 🪟 Layer / พื้นหลังพิเศษ
 		case theme.ColorNameMenuBackground: // → เมนู (dropdown / popup)

@@ -154,9 +154,37 @@ func packimage(projectPath string, output *widget.Entry) {
 	output.SetText("🔴️ no terminal found")
 }
 
+// test
 func showMsg(msg string) {
 	// ใช้ dialog ถ้าต้องการ popup
 	// dialog.ShowInformation("แจ้งเตือน", msg, w)
 	// แต่ตัวอย่างนี้ขอใช้ print
 	println(msg)
+}
+
+// ============================================================================
+// EXE
+// ============================================================================
+// ============================================================================
+// ฟังชั้น build Scriptbuild EXE
+// ============================================================================
+func buildexe(projectPath string, output *widget.Entry) {
+
+	commands := [][]string{
+		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
+		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
+		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
+		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
+	}
+
+	for _, c := range commands {
+		cmd := exec.Command(c[0], c[1:]...)
+		err := cmd.Start()
+		if err == nil {
+			output.SetText("🚀 opened terminal: " + c[0])
+			return
+		}
+	}
+
+	output.SetText("❌ no terminal found")
 }

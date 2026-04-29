@@ -1,0 +1,26 @@
+1 ICON "icon.ico"
+
+1 VERSIONINFO
+FILEVERSION {{.Fileversion}}
+PRODUCTVERSION {{.Fileversion}}
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "{{.CompanyName}}"
+      VALUE "FileDescription", "{{.Name}}"
+      VALUE "FileVersion", "{{.Version}}"
+      VALUE "InternalName", "{{.Name}}.exe"
+      VALUE "OriginalFilename", "{{.Name}}.exe"
+      VALUE "ProductName", "{{.Name}}"
+      VALUE "LegalCopyright", "Copyright (C) {{.Years}} {{.CompanyName}}. {{.Licenseexe}}"
+      VALUE "ProductVersion", "{{.Version}}"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 1200
+  END
+END
