@@ -124,7 +124,7 @@ func main() {
 	description := widget.NewMultiLineEntry()
 
 	description.SetPlaceHolder("*Description - รายละเอียดของแอพ")
-	description.SetMinRowsVisible(6)
+	//description.SetMinRowsVisible(6)
 
 	developer := widget.NewEntry()
 	developer.SetPlaceHolder("by Your name")
@@ -623,20 +623,20 @@ func main() {
 			container.NewVBox(
 				container.NewGridWithColumns(2, name, appID),
 				container.NewGridWithColumns(2, command, developer),
-				categories,
-				catmenu,
-				container.NewGridWithColumns(2, version),
+				container.NewGridWithColumns(2, categories, owner),
+				container.NewGridWithColumns(2, catmenu, container.NewVBox(nameRepo, version, summary, description, desUpdate1, desUpdate2, desUpdate3)),
+
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
-				summary, description,
-				container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
-				container.NewGridWithColumns(2, owner, nameRepo),
+
+				//container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
+
 				namePix1,
 				namePix2,
 				namePix3,
 				namePix4,
 				namePix5,
 				genscripflatpakBtn,
-				container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
+				container.NewCenter(widget.NewLabel("ตรวจเช็คไฟล์ XML ก่อน")),
 				buildflatpakBtn, installBtn,
 			))
 		setContent(container.NewBorder(
