@@ -212,14 +212,18 @@ func main() {
 			}
 			projectPath = uri.Path()
 
-			cfg := AppConfig{}
-			generateFile("templates/clear/clear.tmpl",
-				filepath.Join(projectPath, "clear.sh"), cfg) //
+			go func() {
+				cfg := AppConfig{}
+				generateFile("templates/clear/clear.tmpl",
+					filepath.Join(projectPath, "clear.sh"), cfg) //
 
-			labelSelectProject.SetText("✅️ เลือกโฟลเดอร์")
-			logBox.SetText(projectPath)
-			logSelectProject.SetText(projectPath)
+				fyne.Do(func() { // 🚪 เข้าประตู UI
+					labelSelectProject.SetText("✅️ เลือกโฟลเดอร์")
+					logBox.SetText(projectPath)
+					logSelectProject.SetText(projectPath)
 
+				})
+			}()
 		}, w)
 
 		g.Resize(fyne.NewSize(800, 600))
@@ -263,6 +267,9 @@ func main() {
 	// test ด่วน
 	// ============================================================================
 	exBtn := widget.NewButton("Ex.", func() {
+		//	go func() {
+		//	fyne.DoAndWait(func() {
+
 		name.SetText("Music_Player")
 		appID.SetText("com.xxx.Music_Player")
 		command.SetText("Music_Player")
@@ -290,11 +297,17 @@ func main() {
 		years.SetText("2026")
 
 		logBox.SetText("✅️ Example now")
+
 	})
+	//	}()
+	//	})
 	// ============================================================================
 	// Reset
 	// ============================================================================
 	resetBtn := widget.NewButton("Reset", func() {
+		//	go func() {
+		//		fyne.DoAndWait(func() {
+
 		name.SetText("")
 		appID.SetText("com.nawakarit.")
 		command.SetText("")
@@ -323,6 +336,9 @@ func main() {
 
 		logBox.SetText("✅️ Reset")
 	})
+	//	}()
+	//	})
+
 	// ============================================================================
 	// AppimageTool
 	// ============================================================================
@@ -336,10 +352,13 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-		go copyAppImageTool(projectPath)
-
-		logBox.SetText("✅️ Coppy Appimage")
-		labelCoppyimage.SetText("✅️ Coppy Appimage")
+		go func() { //จะไม่ใช้ go func ก็ได้ //ทำเบื่องหลังเร็วขึ้น*มั้ง
+			copyAppImageTool(projectPath)
+			fyne.Do(func() { //กันฟังชั้น go ทำ ui พัง
+				logBox.SetText("✅️ Coppy Appimage")
+				labelCoppyimage.SetText("✅️ Coppy Appimage")
+			})
+		}()
 	})
 	// ============================================================================
 	// Generate scrip Appimage Btn
@@ -351,16 +370,19 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-		cfg := AppConfig{
-			Name:       name.Text,
-			Command:    command.Text,
-			Categories: categories.Text,
-		}
-		generateFile("templates/tmp_image/buildimage.tmpl",
-			filepath.Join(projectPath, "buildimage.sh"), cfg) //เอา scrip build appimage ออกมาไว้นอกแฟ้ม flatpak
-
-		logBox.SetText("✅️ Scrip Appimage")
-		labelScripAppimage.SetText("✅️ Scrip Appimage")
+		go func() {
+			cfg := AppConfig{
+				Name:       name.Text,
+				Command:    command.Text,
+				Categories: categories.Text,
+			}
+			generateFile("templates/tmp_image/buildimage.tmpl",
+				filepath.Join(projectPath, "buildimage.sh"), cfg) //เอา scrip build appimage ออกมาไว้นอกแฟ้ม flatpak
+			fyne.Do(func() {
+				logBox.SetText("✅️ Scrip Appimage")
+				labelScripAppimage.SetText("✅️ Scrip Appimage")
+			})
+		}()
 	})
 	// ============================================================================
 	// pack Appimage
@@ -382,12 +404,13 @@ func main() {
 			return
 		}
 
-		//  run script
-		go packimage(projectPath, logBox)
-
-		logBox.SetText("✅️ Pack Image started in terminal...")
-		labelpackimage.SetText("✅️ Pack Image")
-
+		go func() {
+			packimage(projectPath, logBox)
+			fyne.Do(func() { //
+				logBox.SetText("✅️ Pack Image started in terminal...")
+				labelpackimage.SetText("✅️ Pack Image")
+			})
+		}()
 	})
 	// ============================================================================
 	// Flatpak
@@ -403,51 +426,53 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
+		go func() {
+			cfg := AppConfig{
+				Name:        name.Text,
+				AppID:       appID.Text,
+				Command:     command.Text,
+				Categories:  categories.Text,
+				Summary:     summary.Text,
+				Description: description.Text,
+				License:     "GPL-3.0-or-later",
+				Developer:   developer.Text,
+				Date:        date.Text,
+				TimeEntry:   timeEntry.Text,
+				Version:     version.Text,
+				DesUpdate1:  desUpdate1.Text,
+				DesUpdate2:  desUpdate2.Text,
+				DesUpdate3:  desUpdate3.Text,
+				Owner:       owner.Text,
+				NameRepo:    nameRepo.Text,
+				NamePix1:    namePix1.Text,
+				NamePix2:    namePix2.Text,
+				NamePix3:    namePix3.Text,
+				NamePix4:    namePix4.Text,
+				NamePix5:    namePix5.Text,
+			}
 
-		cfg := AppConfig{
-			Name:        name.Text,
-			AppID:       appID.Text,
-			Command:     command.Text,
-			Categories:  categories.Text,
-			Summary:     summary.Text,
-			Description: description.Text,
-			License:     "GPL-3.0-or-later",
-			Developer:   developer.Text,
-			Date:        date.Text,
-			TimeEntry:   timeEntry.Text,
-			Version:     version.Text,
-			DesUpdate1:  desUpdate1.Text,
-			DesUpdate2:  desUpdate2.Text,
-			DesUpdate3:  desUpdate3.Text,
-			Owner:       owner.Text,
-			NameRepo:    nameRepo.Text,
-			NamePix1:    namePix1.Text,
-			NamePix2:    namePix2.Text,
-			NamePix3:    namePix3.Text,
-			NamePix4:    namePix4.Text,
-			NamePix5:    namePix5.Text,
-		}
+			flatpakPath := projectPath + "/" + "flatpak"
+			os.MkdirAll(flatpakPath, 0755)
 
-		flatpakPath := projectPath + "/" + "flatpak"
-		os.MkdirAll(flatpakPath, 0755)
+			generateFile("templates/tmp_flatpak/desktop.tmpl",
+				filepath.Join(flatpakPath, cfg.AppID+".desktop"), cfg)
 
-		generateFile("templates/tmp_flatpak/desktop.tmpl",
-			filepath.Join(flatpakPath, cfg.AppID+".desktop"), cfg)
+			generateFile("templates/tmp_flatpak/manifest.tmpl",
+				filepath.Join(flatpakPath, cfg.AppID+".json"), cfg)
 
-		generateFile("templates/tmp_flatpak/manifest.tmpl",
-			filepath.Join(flatpakPath, cfg.AppID+".json"), cfg)
+			generateFile("templates/tmp_flatpak/metainfo.tmpl",
+				filepath.Join(flatpakPath, cfg.AppID+".metainfo.xml"), cfg)
 
-		generateFile("templates/tmp_flatpak/metainfo.tmpl",
-			filepath.Join(flatpakPath, cfg.AppID+".metainfo.xml"), cfg)
+			generateFile("templates/tmp_flatpak/buildflatpak.tmpl",
+				filepath.Join(projectPath, "buildflatpak.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
 
-		generateFile("templates/tmp_flatpak/buildflatpak.tmpl",
-			filepath.Join(projectPath, "buildflatpak.sh"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม flatpak
-
-		generateFile("templates/tmp_flatpak/buildinstall.tmpl",
-			filepath.Join(projectPath, "buildinstall.sh"), cfg)
-
-		logBox.SetText("✅️ Scrip flatpak")
-		labelGeneratescripflatpak.SetText("✅️ Scrip flatpak")
+			generateFile("templates/tmp_flatpak/buildinstall.tmpl",
+				filepath.Join(projectPath, "buildinstall.sh"), cfg)
+			fyne.Do(func() { //
+				logBox.SetText("✅️ Scrip flatpak")
+				labelGeneratescripflatpak.SetText("✅️ Scrip flatpak")
+			})
+		}()
 	})
 
 	// ============================================================================
@@ -462,11 +487,14 @@ func main() {
 			return
 		}
 
-		//  run script
-		go runScriptbuildflatpak(projectPath, logBox)
+		go func() {
+			runScriptbuildflatpak(projectPath, logBox)
 
-		logBox.SetText("✅️ Pack Flatpak started in terminal...")
-		labelPackFlatpak.SetText("✅️ Pack Flatpak")
+			fyne.Do(func() { // เข้าประตู UI
+				logBox.SetText("✅️ Pack Flatpak started in terminal...")
+				labelPackFlatpak.SetText("✅️ Pack Flatpak")
+			})
+		}()
 	})
 
 	// ============================================================================
@@ -480,10 +508,13 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-		go runScripinstallflatpak(projectPath, logBox)
-
-		logBox.SetText("✅️ ติดตั้ง Flatpak started in terminal...")
-		labelInstallFlatpak.SetText("✅️ ติดตั้ง Flatpak")
+		go func() {
+			runScripinstallflatpak(projectPath, logBox)
+			fyne.Do(func() { //
+				logBox.SetText("✅️ ติดตั้ง Flatpak started in terminal...")
+				labelInstallFlatpak.SetText("✅️ ติดตั้ง Flatpak")
+			})
+		}()
 	})
 
 	// ============================================================================
@@ -517,30 +548,31 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
+		go func() {
+			cfg := AppConfig{
+				Name:    name.Text,
+				AppID:   appID.Text,
+				Version: version.Text,
+				//exe
+				CompanyName: companyName.Text,
+				Fileversion: fileversion.Text,
+				Years:       years.Text,
+				Licenseexe:  licenseexe.Text,
+			}
+			generateFile("templates/tmp_exe/app.rc.tmpl",
+				filepath.Join(projectPath, "app.rc"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม
 
-		cfg := AppConfig{
-			Name:    name.Text,
-			AppID:   appID.Text,
-			Version: version.Text,
+			generateFile("templates/tmp_exe/buildexe.tmpl",
+				filepath.Join(projectPath, "buildexe.sh"), cfg)
 
-			//exe
-			CompanyName: companyName.Text,
-			Fileversion: fileversion.Text,
-			Years:       years.Text,
-			Licenseexe:  licenseexe.Text,
-		}
+			generateFile("templates/tmp_exe/FyneApp.toml.tmpl",
+				filepath.Join(projectPath, "FyneApp.toml"), cfg)
 
-		generateFile("templates/tmp_exe/app.rc.tmpl",
-			filepath.Join(projectPath, "app.rc"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม
-
-		generateFile("templates/tmp_exe/buildexe.tmpl",
-			filepath.Join(projectPath, "buildexe.sh"), cfg)
-
-		generateFile("templates/tmp_exe/FyneApp.toml.tmpl",
-			filepath.Join(projectPath, "FyneApp.toml"), cfg)
-
-		logBox.SetText("✅ Generated scrip exe")
-		labelscripEXE.SetText("✅️ scrip EXE")
+			fyne.Do(func() { //
+				logBox.SetText("✅ Generated scrip exe")
+				labelscripEXE.SetText("✅️ scrip EXE")
+			})
+		}()
 	})
 	// ============================================================================
 	// ปุ่ม Build EXE
@@ -553,14 +585,14 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-
-		//  run script
-		go buildexe(projectPath, logBox)
-
-		logBox.SetText("✅ Build started in terminal...")
-		labelBuildEXE.SetText("✅️ Build EXE")
+		go func() {
+			buildexe(projectPath, logBox)
+			fyne.Do(func() { //
+				logBox.SetText("✅ Build started in terminal...")
+				labelBuildEXE.SetText("✅️ Build EXE")
+			})
+		}()
 	})
-
 	// ============================================================================
 	// ลบไฟล์ build ทั้งหมด
 	// ============================================================================
@@ -571,12 +603,13 @@ func main() {
 			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
-		//  run script
-		go clearFile(projectPath, logBox)
-
-		logBox.SetText("✅ Clear started in terminal...")
-		labelClear.SetText("✅️ Clear")
-
+		go func() {
+			clearFile(projectPath, logBox)
+			fyne.Do(func() { //
+				logBox.SetText("✅ Clear started in terminal...")
+				labelClear.SetText("✅️ Clear")
+			})
+		}()
 	})
 	// ============================================================================
 	// จัดหน้า..มัน *****************************************************************************************
@@ -625,11 +658,8 @@ func main() {
 				container.NewGridWithColumns(2, command, developer),
 				container.NewGridWithColumns(2, categories, owner),
 				container.NewGridWithColumns(2, catmenu, container.NewVBox(nameRepo, version, summary, description, desUpdate1, desUpdate2, desUpdate3)),
-
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
-
 				//container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
-
 				namePix1,
 				namePix2,
 				namePix3,
