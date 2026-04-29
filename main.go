@@ -98,16 +98,31 @@ func main() {
 	categories := widget.NewEntry()
 	categories.SetPlaceHolder("*Utility;")
 
-	catmenu := widget.NewCheckGroup(
+	catmenu := container.NewVScroll(widget.NewCheckGroup(
 		[]string{
-			"Utility",
-			"Development",
-			"Game",
-			"Graphics",
-			"Network",
-			"Office",
+			"AudioVideo",
 			"Audio",
 			"Video",
+			"Player",
+			"Recorder",
+			"Mixer",
+			"Development",
+			"IDE",
+			"Debugger",
+			"VersionControl",
+			"Graphics",
+			"2DGraphics",
+			"RasterGraphics",
+			"VectorGraphics",
+			"Photography",
+			"Network",
+			"WebBrowser",
+			"Email",
+			"IRCClient",
+			"FileTransfer",
+			"Utility",
+			"Office",
+			"Game",
 			"System"},
 		func(selected []string) {
 			if len(selected) == 0 {
@@ -116,6 +131,7 @@ func main() {
 			}
 			categories.SetText(strings.Join(selected, ";") + ";")
 		},
+	),
 	)
 
 	summary := widget.NewEntry()
@@ -273,7 +289,7 @@ func main() {
 		name.SetText("Music_Player")
 		appID.SetText("com.xxx.Music_Player")
 		command.SetText("Music_Player")
-		categories.SetText("Utility;Audio;")
+		categories.SetText("AudioVideo;Audio;")
 		summary.SetText("Test Music_Player")
 		description.SetText("test and Music_Player")
 		developer.SetText("nawakarit")
@@ -636,8 +652,10 @@ func main() {
 			container.NewVBox(
 				name, command,
 				categories,
-				catmenu,
-				coppyimagebtn, scripimageBtn, packimageBtn,
+				container.NewGridWithColumns(2,
+					container.NewVScroll(catmenu),
+					//catmenu,
+					container.NewVBox(coppyimagebtn, scripimageBtn, packimageBtn)),
 			))
 		setContent(container.NewBorder(
 			widget.NewLabel("AppimageTool"),
@@ -654,20 +672,29 @@ func main() {
 	btnflatpak := widget.NewButton("Flatpak", func() {
 		flatpak := container.NewScroll(
 			container.NewVBox(
-				container.NewGridWithColumns(2, name, appID),
-				container.NewGridWithColumns(2, command, developer),
-				container.NewGridWithColumns(2, categories, owner),
-				container.NewGridWithColumns(2, catmenu, container.NewVBox(nameRepo, version, summary, description, desUpdate1, desUpdate2, desUpdate3)),
+				container.NewGridWithColumns(2,
+					container.NewVBox(
+						name,
+						command,
+						nameRepo,
+						appID,
+						owner,
+						developer,
+						version,
+						summary,
+						description,
+						desUpdate1,
+						desUpdate2,
+						desUpdate3,
+					),
+					container.NewBorder(categories, nil, nil, nil, catmenu),
+				),
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
-				//container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
 				namePix1,
-				namePix2,
-				namePix3,
-				namePix4,
-				namePix5,
-				genscripflatpakBtn,
-				container.NewCenter(widget.NewLabel("ตรวจเช็คไฟล์ XML ก่อน")),
-				buildflatpakBtn, installBtn,
+				container.NewGridWithColumns(2, namePix2, genscripflatpakBtn),
+				container.NewGridWithColumns(2, namePix3, container.NewCenter(widget.NewLabel("ตรวจเช็คไฟล์ XML ก่อน"))),
+				container.NewGridWithColumns(2, namePix4, buildflatpakBtn),
+				container.NewGridWithColumns(2, namePix5, installBtn),
 			))
 		setContent(container.NewBorder(
 			widget.NewLabel("Flatpak"),
