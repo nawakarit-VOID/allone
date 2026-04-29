@@ -136,7 +136,7 @@ func main() {
 	timeEntry.SetPlaceHolder("HH:MM")
 
 	version := widget.NewEntry()
-	version.SetPlaceHolder("*Version เช่น 1.0.0")
+	version.SetPlaceHolder("*Version เช่น 1.0.0 (Dot)")
 
 	desUpdate1 := widget.NewEntry()
 	desUpdate1.SetPlaceHolder("*อัพเดท 1")
@@ -174,22 +174,19 @@ func main() {
 
 	fileversion := widget.NewEntry()
 	fileversion.SetText("1,1,1,1")
-	fileversion.SetPlaceHolder("*version (exe) เช่น 1,1,1,1")
+	fileversion.SetPlaceHolder("*version (exe) เช่น 1,1,1,1 (Comma)")
 
 	years := widget.NewEntry()
 	years.SetPlaceHolder("*20XX")
 	years1 := container.NewGridWrap(fyne.NewSize(100, 35), years)
-	//years := widget.NewLabel("")
 
 	month := widget.NewEntry()
 	month.SetPlaceHolder("*01-12")
 	month1 := container.NewGridWrap(fyne.NewSize(80, 35), month)
-	//month := widget.NewLabel("")
 
 	days := widget.NewEntry()
 	days.SetPlaceHolder("*01-31")
 	days1 := container.NewGridWrap(fyne.NewSize(80, 35), days)
-	//days := widget.NewLabel("")
 
 	licenseexe := widget.NewEntry()
 	licenseexe.SetText("GNU General Public License v3.0")
@@ -269,7 +266,7 @@ func main() {
 		summary.SetText("Test Music_Player")
 		description.SetText("test and Music_Player")
 		developer.SetText("nawakarit")
-		version.SetText("999.999.999")
+		version.SetText("1.1.1")
 		desUpdate1.SetText("ad go func")
 		desUpdate2.SetText("ad SCR")
 		desUpdate3.SetText("ad icons")
@@ -280,6 +277,13 @@ func main() {
 		namePix3.SetText("test_2026-04-06_21-07-18")
 		namePix4.SetText("test_2026-04-06_21-07-08")
 		namePix5.SetText("test_2026-04-06_21-06-09")
+		//exe
+		companyName.SetText("Nawakarit")
+		licenseexe.SetText("GNU General Public License v3.0")
+		fileversion.SetText("1,1,1,1")
+		days.SetText("1")
+		month.SetText("11")
+		years.SetText("2026")
 
 		logBox.SetText("✅️ Example now")
 	})
@@ -305,6 +309,13 @@ func main() {
 		namePix3.SetText("")
 		namePix4.SetText("")
 		namePix5.SetText("")
+		//exe
+		companyName.SetText("")
+		licenseexe.SetText("")
+		fileversion.SetText("")
+		days.SetText("")
+		month.SetText("")
+		years.SetText("")
 
 		logBox.SetText("✅️ Reset")
 	})
@@ -482,6 +493,10 @@ func main() {
 		date.SetText(now.Format("2006-01-02"))
 		timeEntry.SetText(now.Format("15:04"))
 		labelTime.SetText("✅️ เวลาปัจจุบัน")
+
+		years.SetText(now.Format("2006")) //ปี
+		month.SetText(now.Format("01"))   //เดือน
+		days.SetText(now.Format("02"))    //วัน
 	})
 
 	// ============================================================================
@@ -490,7 +505,7 @@ func main() {
 	genscripexeBtn := widget.NewButton("Generate scrip EXE", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ Please select project folder")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
@@ -506,22 +521,14 @@ func main() {
 			Licenseexe:  licenseexe.Text,
 		}
 
-		//flatpakPath := projectPath + "/" + "flatpak"
-		//os.MkdirAll(flatpakPath, 0755)
-
-		generateFile("templates//tmp_exe/app.rc.tmpl",
+		generateFile("templates/tmp_exe/app.rc.tmpl",
 			filepath.Join(projectPath, "app.rc"), cfg) //เอา scrip build ออกมาไว้นอกแฟ้ม
 
-		generateFile("templates//tmp_exe/buildexe.tmpl",
+		generateFile("templates/tmp_exe/buildexe.tmpl",
 			filepath.Join(projectPath, "buildexe.sh"), cfg)
 
-		generateFile("templates//tmp_exe/FyneApp.toml.tmpl",
+		generateFile("templates/tmp_exe/FyneApp.toml.tmpl",
 			filepath.Join(projectPath, "FyneApp.toml"), cfg)
-
-		//now := time.Now()
-		//date.SetText(now.Format("2006-01-02"))
-		//timeEntry.SetText(now.Format("15:04"))
-		//years.SetText(now.Format("2006"))
 
 		logBox.SetText("✅ Generated scrip exe")
 	})
@@ -531,14 +538,14 @@ func main() {
 	buildexe := widget.NewButton("Build EXE", func() {
 
 		if projectPath == "" {
-			logBox.SetText("❌ select folder first")
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
 			return
 		}
 
 		//  run script
 		go buildexe(projectPath, logBox)
 
-		logBox.SetText("🚀 Build started in terminal...")
+		logBox.SetText("✅ Build started in terminal...")
 	})
 
 	// ============================================================================
@@ -624,10 +631,8 @@ func main() {
 			licenseexe,
 			version,
 			fileversion,
-
-			years1,
-			month1,
-			days1,
+			container.NewCenter(container.NewHBox(widget.NewLabel("วันที่ "), days1, widget.NewLabel("เดือน "), month1, widget.NewLabel("ปี "), years1)),
+			nowBtn,
 
 			genscripexeBtn,
 			buildexe,
