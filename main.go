@@ -759,20 +759,21 @@ func main() {
 	// ============================================================================
 	// ปุ่ม .image
 	btnimage := widget.NewButton("Image", func() {
-		image := container.NewScroll(
-			container.NewVBox(
-				name, command,
-				categories,
-				container.NewGridWithColumns(2,
-					container.NewVScroll(catmenu),
-					container.NewVBox(coppyimagebtn, scripimageBtn, packimageBtn)),
-			))
-		setContent(container.NewBorder(
+		topimage := container.NewVBox(
 			widget.NewLabel("AppimageTool"),
+			name,
+			command,
+			categories)
+		botimage := container.NewVBox(
+			coppyimagebtn,
+			scripimageBtn,
+			packimageBtn)
+		setContent(container.NewBorder(
+			topimage,
+			botimage,
 			nil,
 			nil,
-			nil,
-			image,
+			catmenu,
 		))
 	})
 	// ============================================================================
@@ -796,15 +797,21 @@ func main() {
 						desUpdate1,
 						desUpdate2,
 						desUpdate3,
+						namePix1,
+						namePix2,
+						namePix3,
+						namePix4,
+						namePix5,
 					),
 					container.NewBorder(categories, nil, nil, nil, catmenu),
 				),
+
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
-				namePix1,
-				container.NewGridWithColumns(2, namePix2, genscripflatpakBtn),
-				container.NewGridWithColumns(2, namePix3, container.NewCenter(widget.NewLabel("ตรวจเช็คไฟล์ XML ก่อน"))),
-				container.NewGridWithColumns(2, namePix4, buildflatpakBtn),
-				container.NewGridWithColumns(2, namePix5, installBtn),
+				container.NewGridWithColumns(4,
+					genscripflatpakBtn,
+					container.NewCenter(widget.NewLabel("ตรวจเช็คไฟล์ XML ก่อน")),
+					buildflatpakBtn,
+					installBtn),
 			))
 		setContent(container.NewBorder(
 			widget.NewLabel("Flatpak"),
@@ -905,6 +912,6 @@ func main() {
 		contentArea)
 
 	w.SetContent(mainContainer)
-	w.Resize(fyne.NewSize(850, 850))
+	w.Resize(fyne.NewSize(900, 900))
 	w.ShowAndRun()
 }

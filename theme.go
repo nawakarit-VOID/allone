@@ -156,7 +156,7 @@ func (m MyTheme) Size(name fyne.ThemeSizeName) float32 {
 	case theme.SizeNamePadding: // → ระยะห่างทั่วไป (margin/padding ของ widget)
 		return 4
 	case theme.SizeNameSeparatorThickness: // → ความหนาเส้นคั่น
-		return 0
+		return 1
 
 	// 🖼️ ไอคอน / scrollbar
 	case theme.SizeNameInlineIcon: // → ขนาด icon ในปุ่ม/ข้อความ /dialog
