@@ -181,10 +181,37 @@ func buildexe(projectPath string, output *widget.Entry) {
 		cmd := exec.Command(c[0], c[1:]...)
 		err := cmd.Start()
 		if err == nil {
-			output.SetText("🚀 opened terminal: " + c[0])
+			output.SetText("✅️ opened terminal: " + c[0])
 			return
 		}
 	}
 
-	output.SetText("❌ no terminal found")
+	output.SetText("🔴️ no terminal found")
+}
+
+// ============================================================================
+// EXE
+// ============================================================================
+// ============================================================================
+// ฟังชั้น build Scriptbuild EXE
+// ============================================================================
+func clearFile(projectPath string, output *widget.Entry) {
+
+	commands := [][]string{
+		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
+		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
+		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
+		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
+	}
+
+	for _, c := range commands {
+		cmd := exec.Command(c[0], c[1:]...)
+		err := cmd.Start()
+		if err == nil {
+			output.SetText("✅️ opened terminal: " + c[0])
+			return
+		}
+	}
+
+	output.SetText(" 🔴️ no terminal found")
 }

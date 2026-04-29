@@ -212,6 +212,10 @@ func main() {
 			}
 			projectPath = uri.Path()
 
+			cfg := AppConfig{}
+			generateFile("templates/clear/clear.tmpl",
+				filepath.Join(projectPath, "clear.sh"), cfg) //
+
 			labelSelectProject.SetText("✅️ เลือกโฟลเดอร์")
 			logBox.SetText(projectPath)
 			logSelectProject.SetText(projectPath)
@@ -486,11 +490,14 @@ func main() {
 	// ปุ่มเพิ่มวัน เวลา
 	// ============================================================================
 	labelTime := widget.NewLabel("🔴️ เวลาปัจจุบัน")
+	dates := widget.NewLabel("")
 
 	nowBtn := widget.NewButton("เวลาปัจจุบัน", func() {
 		now := time.Now()
 
 		date.SetText(now.Format("2006-01-02"))
+		dates.SetText(now.Format("เวลา 15:04\nวันที่ 02/01/2006"))
+
 		timeEntry.SetText(now.Format("15:04"))
 		labelTime.SetText("✅️ เวลาปัจจุบัน")
 
@@ -502,6 +509,8 @@ func main() {
 	// ============================================================================
 	// Generate scrip EXE Btn
 	// ============================================================================
+	labelscripEXE := widget.NewLabel("🔴️ scrip EXE")
+
 	genscripexeBtn := widget.NewButton("Generate scrip EXE", func() {
 
 		if projectPath == "" {
@@ -531,10 +540,13 @@ func main() {
 			filepath.Join(projectPath, "FyneApp.toml"), cfg)
 
 		logBox.SetText("✅ Generated scrip exe")
+		labelscripEXE.SetText("✅️ scrip EXE")
 	})
 	// ============================================================================
 	// ปุ่ม Build EXE
 	// ============================================================================
+	labelBuildEXE := widget.NewLabel("🔴️ Build EXE")
+
 	buildexe := widget.NewButton("Build EXE", func() {
 
 		if projectPath == "" {
@@ -546,10 +558,28 @@ func main() {
 		go buildexe(projectPath, logBox)
 
 		logBox.SetText("✅ Build started in terminal...")
+		labelBuildEXE.SetText("✅️ Build EXE")
 	})
 
 	// ============================================================================
-	// จัดหน้า..มัน
+	// ลบไฟล์ build ทั้งหมด
+	// ============================================================================
+	labelClear := widget.NewLabel("🔴️ Clear")
+
+	clearBtn := widget.NewButton("Clear", func() {
+		if projectPath == "" {
+			logBox.SetText("🔴️ โปรดเลือกโฟลเดอร์โปรเจค")
+			return
+		}
+		//  run script
+		go clearFile(projectPath, logBox)
+
+		logBox.SetText("✅ Clear started in terminal...")
+		labelClear.SetText("✅️ Clear")
+
+	})
+	// ============================================================================
+	// จัดหน้า..มัน *****************************************************************************************
 	// ============================================================================
 	// สร้างพื้นที่แสดงเนื้อหาหลัก (ด้านขวา)
 	contentArea := container.NewStack()
@@ -569,13 +599,19 @@ func main() {
 	// ============================================================================
 	// ปุ่ม .image
 	btnimage := widget.NewButton("Image", func() {
-		setContent(container.NewVBox(
+		image := container.NewScroll(
+			container.NewVBox(
+				name, command,
+				categories,
+				catmenu,
+				coppyimagebtn, scripimageBtn, packimageBtn,
+			))
+		setContent(container.NewBorder(
 			widget.NewLabel("AppimageTool"),
-			name, command,
-			categories,
-			catmenu,
-			//buttons,
-			coppyimagebtn, scripimageBtn, packimageBtn,
+			nil,
+			nil,
+			nil,
+			image,
 		))
 	})
 	// ============================================================================
@@ -583,11 +619,8 @@ func main() {
 	// ============================================================================
 	// ปุ่ม btnflatpak
 	btnflatpak := widget.NewButton("Flatpak", func() {
-
 		flatpak := container.NewScroll(
-
 			container.NewVBox(
-
 				container.NewGridWithColumns(2, name, appID),
 				container.NewGridWithColumns(2, command, developer),
 				categories,
@@ -595,7 +628,6 @@ func main() {
 				container.NewGridWithColumns(2, version),
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
 				summary, description,
-
 				container.NewGridWithColumns(3, desUpdate1, desUpdate2, desUpdate3),
 				container.NewGridWithColumns(2, owner, nameRepo),
 				namePix1,
@@ -604,9 +636,7 @@ func main() {
 				namePix4,
 				namePix5,
 				genscripflatpakBtn,
-
 				container.NewCenter(widget.NewLabel("6 - ตรวจเช็คไฟล์ XML ก่อน")),
-
 				buildflatpakBtn, installBtn,
 			))
 		setContent(container.NewBorder(
@@ -623,19 +653,25 @@ func main() {
 	// ============================================================================
 	// ปุ่ม EXE
 	btnEXE := widget.NewButton("EXE", func() {
-		setContent(container.NewVBox(
+		EXE := container.NewScroll(
+			container.NewVBox(
+				name,
+				appID,
+				companyName,
+				licenseexe,
+				version,
+				fileversion,
+				container.NewCenter(container.NewHBox(widget.NewLabel("วันที่ "), days1, widget.NewLabel("เดือน "), month1, widget.NewLabel("ปี "), years1)),
+				nowBtn,
+				genscripexeBtn,
+				buildexe,
+			))
+		setContent(container.NewBorder(
 			widget.NewLabel("EXE"),
-			name,
-			appID,
-			companyName,
-			licenseexe,
-			version,
-			fileversion,
-			container.NewCenter(container.NewHBox(widget.NewLabel("วันที่ "), days1, widget.NewLabel("เดือน "), month1, widget.NewLabel("ปี "), years1)),
-			nowBtn,
-
-			genscripexeBtn,
-			buildexe,
+			nil,
+			nil,
+			nil,
+			EXE,
 		))
 	})
 	// ============================================================================
@@ -643,6 +679,8 @@ func main() {
 	// ============================================================================
 	// เมนูด้านซ้าย
 	// ซ้ายย่อย //label*
+	labellist := container.NewVBox(labelSelectProject, logSelectProject)
+
 	labelicons := container.NewHBox(labelScripIcons, labelBuildIcons)
 
 	labelappimage := container.NewVBox(
@@ -653,31 +691,40 @@ func main() {
 		container.NewHBox(labelGeneratescripflatpak, labelPackFlatpak),
 		labelInstallFlatpak)
 
+	labeldatetimenow := container.NewVBox(
+		container.NewHBox(labelTime, dates))
+
+	labelEXE := container.NewVBox(
+		container.NewHBox(labelscripEXE, labelBuildEXE),
+	)
+
 	// ซ้ายหลัก
 	leftMenu := container.NewBorder(
 		container.NewVBox(
 			widget.NewLabelWithStyle("เมนูหลัก", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 			selectBtn,
-			container.NewHScroll(logSelectProject),
 			container.NewGridWithColumns(2, genscripiconsBtn, buildIconsBtn),
 			container.NewGridWithColumns(2, exBtn, resetBtn),
-			btnimage,
-			btnflatpak,
+			container.NewGridWithColumns(2, btnimage, btnflatpak),
 			btnEXE,
 			logBox,
 		),
 		//container.NewGridWrap(fyne.NewSize(250, 40), widget.NewButton("🔴️ ออก", func() { a.Quit() })),
-		widget.NewButton("🔴️ ออก", func() { a.Quit() }),
+		container.NewGridWithColumns(2,
+			clearBtn,
+			widget.NewButton("🔴️ ออก", func() { a.Quit() })),
+
 		nil,
 		nil,
 		container.NewVScroll(
 			container.NewVBox(
-				widget.NewCard("List", "", labelSelectProject),
+				widget.NewCard("List", "", labellist),
 				widget.NewCard("Icons", "", labelicons),
 				widget.NewCard("AppimageTool", "", labelappimage),
 				widget.NewCard("Flatpak", "", labelflatpak),
-				widget.NewCard("Time", "", labelTime),
-				widget.NewCard("EXE", "", nil),
+				widget.NewCard("Time", "", labeldatetimenow),
+				widget.NewCard("EXE", "", labelEXE),
+				widget.NewCard("Clear", "", labelClear),
 			)),
 	)
 
