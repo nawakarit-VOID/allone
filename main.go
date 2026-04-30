@@ -762,6 +762,7 @@ func main() {
 		topimage := container.NewVBox(
 			widget.NewLabel("AppimageTool"),
 			name,
+
 			command,
 			categories)
 		botimage := container.NewVBox(
