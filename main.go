@@ -257,15 +257,12 @@ func main() {
 
 	years := widget.NewEntry()
 	years.SetPlaceHolder("*20XX")
-	years1 := container.NewGridWrap(fyne.NewSize(100, 35), years)
 
 	month := widget.NewEntry()
 	month.SetPlaceHolder("*01-12")
-	month1 := container.NewGridWrap(fyne.NewSize(80, 35), month)
 
 	days := widget.NewEntry()
 	days.SetPlaceHolder("*01-31")
-	days1 := container.NewGridWrap(fyne.NewSize(80, 35), days)
 
 	licenseexe := widget.NewEntry()
 	licenseexe.SetText("GNU General Public License v3.0")
@@ -762,7 +759,6 @@ func main() {
 		topimage := container.NewVBox(
 			widget.NewLabel("AppimageTool"),
 			name,
-
 			command,
 			categories)
 		botimage := container.NewVBox(
@@ -783,30 +779,31 @@ func main() {
 	// ปุ่ม btnflatpak
 	btnflatpak := widget.NewButton("Flatpak", func() {
 		flatpak := container.NewScroll(
-			container.NewVBox(
-				container.NewGridWithColumns(2,
-					container.NewVBox(
-						name,
-						command,
-						nameRepo,
-						appID,
-						owner,
-						developer,
-						version,
-						summary,
-						description,
-						desUpdate1,
-						desUpdate2,
-						desUpdate3,
-						namePix1,
-						namePix2,
-						namePix3,
-						namePix4,
-						namePix5,
-					),
-					container.NewBorder(categories, nil, nil, nil, catmenu),
+			container.NewGridWithColumns(2,
+				container.NewVBox(
+					name,
+					command,
+					nameRepo,
+					appID,
+					owner,
+					developer,
+					version,
+					summary,
+					description,
+					desUpdate1,
+					desUpdate2,
+					desUpdate3,
+					namePix1,
+					namePix2,
+					namePix3,
+					namePix4,
+					namePix5,
 				),
-
+				container.NewBorder(categories, nil, nil, nil, catmenu),
+			),
+		)
+		botflatpak := container.NewHScroll(
+			container.NewVBox(
 				container.NewGridWithColumns(3, date, timeEntry, nowBtn),
 				container.NewGridWithColumns(4,
 					genscripflatpakBtn,
@@ -814,9 +811,10 @@ func main() {
 					buildflatpakBtn,
 					installBtn),
 			))
+
 		setContent(container.NewBorder(
 			widget.NewLabel("Flatpak"),
-			nil,
+			botflatpak,
 			nil,
 			nil,
 			flatpak,
@@ -836,8 +834,8 @@ func main() {
 				licenseexe,
 				version,
 				fileversion,
-				container.NewCenter(container.NewHBox(widget.NewLabel("วันที่ "), days1, widget.NewLabel("เดือน "), month1, widget.NewLabel("ปี "), years1)),
-				nowBtn,
+
+				container.NewGridWithColumns(4, days, month, years, nowBtn),
 				genscripexeBtn,
 				buildexe,
 			))
