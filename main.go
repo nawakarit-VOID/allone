@@ -454,6 +454,13 @@ func main() {
 			}
 			generateFile("templates/tmp_image/buildimage.tmpl",
 				filepath.Join(projectPath, "buildimage.sh"), cfg) //เอา scrip build appimage ออกมาไว้นอกแฟ้ม flatpak
+
+			generateFile("templates/tmp_image/installappImage.tmpl",
+				filepath.Join(projectPath, "installappImage.sh"), cfg) //
+
+			generateFile("templates/tmp_image/UninstallappImage.tmpl",
+				filepath.Join(projectPath, "UninstallappImage.sh"), cfg) //
+
 			fyne.Do(func() {
 				logBox.SetText("✅️ Scrip Appimage")
 				labelScripAppimage.SetText("✅️ Scrip Appimage")

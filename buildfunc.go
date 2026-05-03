@@ -136,10 +136,10 @@ func packimage(projectPath string, output *widget.Entry) {
 
 	commands := [][]string{
 
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
+		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
 	}
 
 	for _, c := range commands {

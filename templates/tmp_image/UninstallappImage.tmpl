@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+ICON_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
+DESKTOP_DIR="$HOME/.local/share/applications"
+INSTALL_DIR="$HOME/Applications"
+
+echo "ตรวจเช็คไฟล์"
+sleep 1
+[ -f "$ICON_DIR/{{.Name}}.png" ] || { echo "❌ icon.png missing"; exit 1; }
+[ -f "$DESKTOP_DIR/{{.Name}}.desktop" ] || { echo "❌ .desktop missing"; exit 1; }
+[ -f "$INSTALL_DIR/{{.Name}}-x86_64.AppImage" ] || { echo "❌ appimage missing"; exit 1; }
+
+echo "ลบ..."
+sleep 1
+rm -rf $ICON_DIR/{{.Name}}.png
+rm -rf $DESKTOP_DIR/{{.Name}}.desktop
+rm -rf $INSTALL_DIR/{{.Name}}-x86_64.AppImage
+
+echo "✅ เสร็จแล้ว"
