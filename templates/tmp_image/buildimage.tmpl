@@ -11,7 +11,7 @@ echo "🔍 Checking..."
 
 echo "ตรวจเช็คไฟล์"
 sleep 1
-[ -f "/icons/icon-256.png" ] || { echo "❌ /icons/icon-256.png missing"; exit 1; }
+[ -f "icons/icon-256.png" ] || { echo "❌ /icons/icon-256.png missing"; exit 1; }
 [ -f "main.go" ] || { echo "❌ main.go missing"; exit 1; }
 [ -f "go.mod" ] || { echo "❌ go.mod missing"; exit 1; }
 [ -f "go.sum" ] || { echo "❌ go.sum, missing"; exit 1; }
