@@ -1,8 +1,11 @@
 #!/bin/bash
 set -e
 
+APP={{.Name}}
+EXEC={{.Command}}
+
 INSTALL_DIR="$HOME/Applications"
-ICON_DIR="$HOME/.local/share/.icons/hicolor/256x256/apps"
+ICON_DIR="$HOME/.icons/hicolor/256x256/apps"
 DESKTOP_DIR="$HOME/.local/share/applications"
 
 echo "ตรวจเช็คไฟล์"
@@ -17,4 +20,6 @@ rm -rf $ICON_DIR/{{.Name}}.png
 rm -rf $DESKTOP_DIR/{{.Name}}.desktop
 rm -rf $INSTALL_DIR/{{.Name}}-x86_64.AppImage
 
-echo "✅ เสร็จแล้ว"
+echo "✅ เสร็จแล้ว...Lock..out..."
+sleep 1
+loginctl terminate-user $USER
