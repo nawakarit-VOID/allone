@@ -61,7 +61,7 @@
             -flatpak-builder
             -flatpak install flathub org.freedesktop.Sdk//25.08 หรือ flatpak install flathub org.freedesktop.Platform//25.08
             -imagetool
-            -mingw-w64 (sudo apt install mingw-w64) คือ ชุดเครื่องมือสำหรับใช้บน Linux เพื่อคอมไพล์โปรแกรมให้กลายเป็นโปรแกรม Windows (.exe)
+            -mingw-w64 (sudo apt install mingw-w64) คือ ชุดเครื่องมือสำหรับใช้บน Linux เพื่อคอมไพล์โปรแกรมให้กลายเป็นโปรแกรม Windows (.exe) arch linux (sudo pacman -S mingw-w64-gcc)
             -และอื่นๆที่ไฟล์ go.mod ต้องใช้งาน
 
 คุณสมบัติเด่น
