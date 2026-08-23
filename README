@@ -60,7 +60,7 @@
             -flatpak
             -flatpak-builder
             -imagetool
-            -mingw-w64 (sudo apt install mingw-w64)
+            -mingw-w64 (sudo apt install mingw-w64) คือ ชุดเครื่องมือสำหรับใช้บน Linux เพื่อคอมไพล์โปรแกรมให้กลายเป็นโปรแกรม Windows (.exe) หรือ arch linux () *ติดตั้งเมื่อจำเป็น
             -และอื่นๆที่ไฟล์ go.mod ต้องใช้งาน
 
 คุณสมบัติเด่น
