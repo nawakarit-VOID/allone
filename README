@@ -56,9 +56,10 @@
 
 สิ่งที่เครื่องใช้งานจะต้องมี
             -ภาษา go (golang) (ในเครื่อง)
-            -ImageMagick
+            -ImageMagick (v.7.1.2-29+ ให้ใช้ magick แทน convert)
             -flatpak
             -flatpak-builder
+            -flatpak install flathub org.freedesktop.Sdk//25.08 หรือ flatpak install flathub org.freedesktop.Platform//25.08
             -imagetool
             -mingw-w64 (sudo apt install mingw-w64) คือ ชุดเครื่องมือสำหรับใช้บน Linux เพื่อคอมไพล์โปรแกรมให้กลายเป็นโปรแกรม Windows (.exe)
             -และอื่นๆที่ไฟล์ go.mod ต้องใช้งาน

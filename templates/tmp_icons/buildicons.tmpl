@@ -7,7 +7,8 @@ OUTDIR="icons"
 
 echo " 🖼️ สร้าง..ico..."
 sleep 1
-convert $INPUT -define icon:auto-resize=256,128,64,48,32,16 icon.ico
+#convert $INPUT -define icon:auto-resize=256,128,64,48,32,16 icon.ico #คำสั่งเดิมจะมี convert
+magick $INPUT -define icon:auto-resize=256,128,64,48,32,16 icon.ico #magick v7.1.2-29
 
 echo " 🖼️ สร้าง..png..."
 sleep 1
@@ -18,7 +19,7 @@ mkdir -p $OUTDIR
 SIZES=(512 256 128 64 32 16)
 
 for SIZE in "${SIZES[@]}"; do
-  convert "$INPUT" \
+  magick "$INPUT" \
     -resize ${SIZE}x${SIZE} \
     "$OUTDIR/icon-${SIZE}.png"
 done
