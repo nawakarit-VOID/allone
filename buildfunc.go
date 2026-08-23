@@ -7,33 +7,49 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"text/template"
 
 	"fyne.io/fyne/v2/widget"
 )
 
+func openBuildTerminal(projectPath, script string, output *widget.Entry) {
+	command := "cd -- " + strconv.Quote(projectPath) + " && chmod +x " + strconv.Quote(script) + " && ./" + strconv.Quote(script) + "; exec bash"
+	commands := [][]string{}
+	if terminal := os.Getenv("TERMINAL"); terminal != "" {
+		commands = append(commands, []string{terminal, "-e", "bash", "-lc", command})
+	}
+	commands = append(commands,
+		[]string{"gnome-terminal", "--", "bash", "-lc", command},
+		[]string{"x-terminal-emulator", "-e", "bash", "-lc", command},
+		[]string{"konsole", "-e", "bash", "-lc", command},
+		[]string{"xfce4-terminal", "-e", "bash", "-lc", command},
+		[]string{"mate-terminal", "--", "bash", "-lc", command},
+		[]string{"alacritty", "-e", "bash", "-lc", command},
+		[]string{"kitty", "bash", "-lc", command},
+		[]string{"foot", "bash", "-c", command},
+		[]string{"wezterm", "start", "--", "bash", "-lc", command},
+		[]string{"tilix", "-e", "bash", "-lc", command},
+		[]string{"st", "-e", "bash", "-lc", command},
+	)
+
+	for _, candidate := range commands {
+		if _, err := exec.LookPath(candidate[0]); err != nil {
+			continue
+		}
+		if err := exec.Command(candidate[0], candidate[1:]...).Start(); err == nil {
+			output.SetText("✅️ opened terminal: " + candidate[0])
+			return
+		}
+	}
+	output.SetText("🔴️ no terminal found; install a terminal or set TERMINAL")
+}
+
 // ============================================================================
 // ฟังชั้น build Icons
 // ============================================================================
 func runScriptbuildIcons(projectPath string, output *widget.Entry) {
-
-	commands := [][]string{ //ใช้ imagemagick
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildicons.sh && ./buildicons.sh; exec bash"},
-	}
-
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("✅️ opened terminal: " + c[0])
-			return
-		}
-	}
-
-	output.SetText("🔴️ no terminal found")
+	openBuildTerminal(projectPath, "buildicons.sh", output)
 }
 
 // ============================================================================
@@ -62,48 +78,14 @@ func generateFile(tmplPath, outputPath string, data AppConfig) error {
 // ฟังชั้น build เป็นไฟล์ flatpak
 // ============================================================================
 func runScriptbuildflatpak(projectPath string, output *widget.Entry) {
-
-	commands := [][]string{
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildflatpak.sh && ./buildflatpak.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildflatpak.sh && ./buildflatpak.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildflatpak.sh && ./buildflatpak.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildflatpak.sh && ./buildflatpak.sh; exec bash"},
-	}
-
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("✅️ opened terminal: " + c[0])
-			return
-		}
-	}
-
-	output.SetText("🔴️ no terminal found")
+	openBuildTerminal(projectPath, "buildflatpak.sh", output)
 }
 
 // ============================================================================
 // ฟังชั้น build เป็น install flatpak
 // ============================================================================
 func runScripinstallflatpak(projectPath string, output *widget.Entry) {
-
-	commands := [][]string{
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildinstall.sh && ./buildinstall.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildinstall.sh && ./buildinstall.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildinstall.sh && ./buildinstall.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildinstall.sh && ./buildinstall.sh; exec bash"},
-	}
-
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("✅️ opened terminal: " + c[0])
-			return
-		}
-	}
-
-	output.SetText("🔴️ no terminal found")
+	openBuildTerminal(projectPath, "buildinstall.sh", output)
 }
 
 // ============================================================================
@@ -133,25 +115,7 @@ func copyAppImageTool(projectPath string) error {
 // build image
 // ============================================================================
 func packimage(projectPath string, output *widget.Entry) {
-
-	commands := [][]string{
-
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x installappImage.sh && chmod +x UninstallappImage.sh && chmod +x buildimage.sh && ./buildimage.sh; exec bash"},
-	}
-
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("✅️ opened terminal: " + c[0])
-			return
-		}
-	}
-
-	output.SetText("🔴️ no terminal found")
+	openBuildTerminal(projectPath, "buildimage.sh", output)
 }
 
 // test
@@ -169,24 +133,7 @@ func showMsg(msg string) {
 // ฟังชั้น build Scriptbuild EXE
 // ============================================================================
 func buildexe(projectPath string, output *widget.Entry) {
-
-	commands := [][]string{
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x buildexe.sh && ./buildexe.sh; exec bash"},
-	}
-
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("✅️ opened terminal: " + c[0])
-			return
-		}
-	}
-
-	output.SetText("🔴️ no terminal found")
+	openBuildTerminal(projectPath, "buildexe.sh", output)
 }
 
 // ============================================================================
@@ -196,22 +143,5 @@ func buildexe(projectPath string, output *widget.Entry) {
 // ฟังชั้น build Scriptbuild EXE
 // ============================================================================
 func clearFile(projectPath string, output *widget.Entry) {
-
-	commands := [][]string{
-		{"gnome-terminal", "--", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
-		{"x-terminal-emulator", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
-		{"konsole", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
-		{"xfce4-terminal", "-e", "bash", "-c", "cd '" + projectPath + "' && chmod +x clear.sh && ./clear.sh; exec bash"},
-	}
-
-	for _, c := range commands {
-		cmd := exec.Command(c[0], c[1:]...)
-		err := cmd.Start()
-		if err == nil {
-			output.SetText("✅️ opened terminal: " + c[0])
-			return
-		}
-	}
-
-	output.SetText(" 🔴️ no terminal found")
+	openBuildTerminal(projectPath, "clear.sh", output)
 }
